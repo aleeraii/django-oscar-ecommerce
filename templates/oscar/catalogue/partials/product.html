@@ -2,47 +2,51 @@
 {% load i18n %}
 {% load image_tags %}
 {% load reviews_tags %}
+{% load static %}
+
+{% load currency_filters %}
+{% load purchase_info_tags %}
 
 {% block product %}
-    <article class="product_pod">
-        {% block product_image %}
-            <div class="image_container w-100">
-                {% with image=product.primary_image %}
-                    {% oscar_thumbnail image.original "x155" upscale=False as thumb %}
-                    <a href="{{ product.get_absolute_url }}">
-                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}" class="img-thumbnail w-auto mx-auto my-0">
-                    </a>
-                {% endwith %}
+<div class="col-lg-12">
+    <div class="single-product clearfix">
+        <div class="product-img">
+            <span class="pro-label new-label">new</span>
+            <a href="single-product.html"><img src="{% static 'oscar/img/product/6.jpg' %}" alt="" /></a>
+        </div>
+        <div class="product-info">
+            <div class="fix">
+                <h4 class="post-title floatleft"><a href="{{ product.get_absolute_url }}">{{product.title}}</a></h4>
+                <span class="pro-rating floatright">
+                    <a href="#"><i class="zmdi zmdi-star"></i></a>
+                    <a href="#"><i class="zmdi zmdi-star"></i></a>
+                    <a href="#"><i class="zmdi zmdi-star"></i></a>
+                    <a href="#"><i class="zmdi zmdi-star-half"></i></a>
+                    <a href="#"><i class="zmdi zmdi-star-half"></i></a>
+                    <span>( 27 Rating )</span>
+                </span>
             </div>
-        {% endblock %}
 
-        {% block product_review %}
-            {% iffeature "reviews" %}
-                <p class="star-rating {{ product.rating|as_stars }}">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </p>
-            {% endiffeature %}
-        {% endblock %}
-
-        {% block product_title %}
-            <h3 class="mt-3">
-                <a href="{{ product.get_absolute_url }}" title="{{ product.get_title }}">
-                    {{ product.get_title|truncatewords:4 }}
-                </a>
-            </h3>
-        {% endblock %}
-
-        {% block product_price %}
-            <div class="product_price w-100">
-                {% include "oscar/catalogue/partials/stock_record.html" %}
-                {% if not product.is_parent and not product.has_options %}
-                    {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %}
-                {% endif %}
+            <div class="fix mb-20">
+                <span class="pro-price">
+                     {% include "oscar/catalogue/partials/stock_record.html" %}
+                </span>
             </div>
-        {% endblock %}
-    </article>
+            <div class="product-description">
+                <p>{{product.description}}</p>
+            </div>
+            <div class="clearfix">
+                <div class="cart-plus-minus">
+                    <input type="text" value="02" name="qtybutton" class="cart-plus-minus-box">
+                </div>
+                <div class="product-action clearfix">
+                    <a href="wishlist.html" data-bs-toggle="tooltip" data-placement="top" title="Wishlist"><i class="zmdi zmdi-favorite-outline"></i></a>
+                    <a href="#" data-bs-toggle="modal"  data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>
+                    <a href="#" data-bs-toggle="tooltip" data-placement="top" title="Compare"><i class="zmdi zmdi-refresh"></i></a>
+                    <a href="cart.html" data-bs-toggle="tooltip" data-placement="top" title="Add To Cart"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
