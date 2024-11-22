@@ -4,6 +4,7 @@
 {% load category_tags %}
 {% load product_tags %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}
     {% if summary %}{{ summary }} |{% endif %} {{ block.super }}
@@ -41,13 +42,13 @@
 <div class="row">
     <!-- Left Sidebar -->
     <div class="">
-        <!-- Widget-Search start -->
-       <aside class="widget widget-search mb-30">
-            <form action="#">
-                <input type="text" placeholder="Search here..." />
-                <button type="submit">
-                    <i class="zmdi zmdi-search"></i>
-                </button>
+    <!-- Widget-Search start -->
+    <aside class="widget widget-search mb-30">
+           <form method="get" action="{% url 'search:search' %}">
+                <input type="text" name="q" placeholder="Search here..." required />
+                    <button type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
             </form>
         </aside>
 
