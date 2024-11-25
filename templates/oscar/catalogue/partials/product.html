@@ -12,11 +12,13 @@
     <div class="single-product clearfix">
         <div class="product-img">
             <span class="pro-label new-label">new</span>
-            <a href="single-product.html"><img src="{% static 'oscar/img/product/6.jpg' %}" alt="" /></a>
+            <a href="{{ product.get_absolute_url }}"><img src="{% static 'oscar/img/product/6.jpg' %}" alt="" /></a>
         </div>
         <div class="product-info">
             <div class="fix">
                 <h4 class="post-title floatleft"><a href="{{ product.get_absolute_url }}">{{product.title}}</a></h4>
+            </div>
+            <div class="fix">
                 {% iffeature "reviews" %}
                 {% if  product.rating %}
                     <span class="pro-rating floatright">
