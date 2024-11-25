@@ -8,25 +8,43 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{{ homepage_url }}">{% trans "Home" %}</a>
-            </li>
-            {% with category=product.categories.all.0 %}
-                {% for c in category.get_ancestors_and_self %}
-                    <li class="breadcrumb-item">
-                        <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
-                    </li>
-                {% endfor %}
-                <li class="breadcrumb-item">
-                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
-                </li>
-            {% endwith %}
-            <li class="breadcrumb-item active" aria-current="page">{% trans "All reviews" %}</li>
-        </ol>
-    </nav>
-{% endblock %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "SINGLE PRODUCT" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class=""><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                                {% with category=product.get_categories.first %}
+                                    {% for c in category.get_ancestors_and_self %}
+                                        <li class=""><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                                    {% endfor %}
+                                    <li class="" aria-current="page">{{ product.get_title }}</li>
+
+                                    {% get_back_button as backbutton %}
+                                        {% if backbutton %}
+                                            <li class="ml-auto">
+                                                <a href="{{ backbutton.url }}">
+                                                    <i class="fas fa-arrow-left"></i> {{ backbutton.title }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                {% endwith %}
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
+
 
 {% block headertext %}
     {% trans "Customer reviews" %}
