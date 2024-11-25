@@ -20,26 +20,23 @@
     </div>
 {% endblock %}
 
-{% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
-            {% for category in category.get_ancestors %}
-                <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
-            {% endfor %}
-            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
-        </ol>
-    </nav>
-{% endblock breadcrumbs %}
+
+ {% block breadcrumb_summary %}
+    {% for category in category.get_ancestors %}
+        <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+    {% endfor %}
+    <li class="" aria-current="page">{{ category.name }}</li>
+{% endblock breadcrumb_summary %}
+
 
 {% block content %}
     {% if category.description %}
-        <div class="row">
-            <div class="col-sm-9"><p>{{ category.description|safe }}</p></div>
-            {% if category.image %}
-                <div class="col-sm-3"><img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" /></div>
-            {% endif %}
-        </div>
-    {% endif %}
+<!--        <div class="row">-->
+<!--            <div class="col-sm-9"><p>{{ category.description|safe }}</p></div>-->
+<!--            {% if category.image %}-->
+<!--                <div class="col-sm-3"><img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" /></div>-->
+<!--            {% endif %}-->
+<!--        </div>-->
+<!--    {% endif %}-->
     {{ block.super }}
 {% endblock %}

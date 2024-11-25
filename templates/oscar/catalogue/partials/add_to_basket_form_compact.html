@@ -6,11 +6,14 @@
 
 {% if session.availability.is_available_to_buy and session.price.exists %}
     {% basket_form request product 'single' as basket_form %}
-    <form action="{% url 'basket:add' pk=product.pk %}" method="post">
+    <form action="{% url 'basket:add' pk=product.pk %}" method="post" class="d-inline">
         {% csrf_token %}
-        {{ basket_form.as_p }}
-        <button type="submit" class="btn btn-primary btn-block" data-loading-text="{% trans 'Adding...' %}">{% trans "Add to basket" %}</button>
+        {{ basket_form.product_id }}
+        {{ basket_form.quantity }} <!-- Hidden input for quantity -->
+        <a href="#" onclick="this.closest('form').submit();" data-bs-toggle="tooltip" data-placement="top" title="{% trans 'Add To Cart' %}">
+            <i class="zmdi zmdi-shopping-cart-plus"></i>
+        </a>
     </form>
 {% else %}
-    <span class="btn btn-secondary btn-block disabled">{% trans "Add to basket" %}</span>
+    <span class="btn btn-secondary btn-block disabled">{% trans "Unavailable" %}</span>
 {% endif %}

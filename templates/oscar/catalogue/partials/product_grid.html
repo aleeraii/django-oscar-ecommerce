@@ -1,0 +1,57 @@
+{% load static %}
+{% load image_tags %}
+{% load display_tags %}
+{% load i18n %}
+{% load reviews_tags %}
+
+{% block product %}
+<!-- Single-product start -->
+<div class="col-lg-4 col-md-6">
+    <div class="single-product">
+        <div class="product-img">
+            <span class="pro-label new-label"> {% include "oscar/catalogue/partials/stock_record.html" %}</span>
+            <span class="pro-price-2"> </span>
+            <a href="single-product.html"><img src="{% static 'oscar/img/product/6.jpg' %}" alt="" /></a>
+        </div>
+        <div class="product-info clearfix text-center">
+            <div class="fix">
+                <h4 class="post-title"><a href="{{ product.get_absolute_url }}">{{product.title}}</a></h4>
+            </div>
+
+       <!-- Product Rating -->
+            <div class="fix">
+                {% iffeature "reviews" %}
+                {% if  product.rating %}
+                    <span class="pro-rating">
+                        {% for i in "12345"|slice:":5" %}
+                            {% if forloop.counter <= product.rating %}
+                               	<a href="#"><i class="zmdi zmdi-star"></i></a>
+                            {% else %}
+                                <i class="zmdi zmdi-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                {% endif %}
+                {% endiffeature %}
+                {% if not product.rating %}
+                    <span class="pro-rating">
+                        {% for i in "12345"|slice:":5" %}
+                            <i class="zmdi zmdi-star"></i>
+                        {% endfor %}
+                    </span>
+
+                {% endif %}
+            </div>
+
+            <div class="product-action clearfix">
+                <!-- Include the Wishlist functionality -->
+                {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
+                <a href="#" data-bs-toggle="modal"  data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>
+                <a href="#" data-bs-toggle="tooltip" data-placement="top" title="Compare"><i class="zmdi zmdi-refresh"></i></a>
+                <!-- Include the Add to Cart functionality -->
+                {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %} </div>
+        </div>
+    </div>
+</div>
+<!-- Single-product end -->
+{% endblock %}
