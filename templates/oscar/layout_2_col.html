@@ -12,16 +12,17 @@ main content area to split it into a sidebar and a content block
     <div class="product-area pt-80 pb-80 product-style-2">
         <div class="container">
             <div class="row">
+                  <aside class="col-lg-9 order-2 order-lg-2">
+                    {% include "oscar/partials/alert_messages.html" %}
+                    {% block pre_content %}{% endblock %}
+                    {% block content %}{% endblock %}
+                </aside>
+
                 <aside class="col-lg-3 order-2 order-lg-1">
                     {% block column_left %}{% endblock %}
                     {% block column_left_extra %}{% endblock %}
                 </aside>
 
-                <div class="col-lg-9 order-2 order-lg-2">
-                    {% include "oscar/partials/alert_messages.html" %}
-                    {% block pre_content %}{% endblock %}
-                    {% block content %}{% endblock %}
-                </div>
             </div>
         </div>
      </div>
