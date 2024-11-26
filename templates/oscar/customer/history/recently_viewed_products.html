@@ -1,16 +1,32 @@
 {% load i18n %}
 {% load product_tags %}
+{% load static %}
 
-{% with products_sliced=products|slice:":6" %}
-    {% if products_sliced %}
-        <div class="sub-header">
-            <h2>{% trans 'Products you recently viewed' %}</h2>
+ <aside class="widget widget-product mb-30">
+    <div class="widget-title">
+        <h4>Recent products</h4>
         </div>
-
-        <ul class="row list-unstyled mx-0">
-            {% for product in products_sliced %}
-                <li class="col-sm-4 col-md-3 col-lg-3">{% render_product product %}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+            <div class="widget-info sidebar-product clearfix">
+                {% with products_sliced=products|slice:":4" %}
+                  {% if products_sliced %}
+                    {% for product in products_sliced %}
+                        <!-- Single-product start -->
+                        <div class="single-product">
+                            <div class="product-img">
+                                    <a href="{{ product.get_absolute_url }}">
+                                    <img src="{% static 'oscar/img/product/12.jpg' %}" alt="{{ product.title }}" />
+                                </a>
+                            </div>
+                            <div class="product-info">
+                                <h4 class="post-title">
+                                    {{ product.title }}
+                                </h4>
+                                {% include "oscar/catalogue/partials/stock_record.html" %}
+                            </div>
+                        </div>
+                    <!-- Single-product end -->
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+</aside>
