@@ -1,7 +1,7 @@
 {% load i18n %}
 
-<nav class="navbar navbar-static-top nav-checkout navbar-expand-md ">
-    <ul class="navbar-nav mr-auto">
+<div class="shopping-cart-area  pt-80 pb-80">
+    <ul class="cart-page-menu nav row clearfix mb-30">
     {% spaceless %}
         <li class="nav-item step1 {% if step == 1 %}active{% else %}{% if step == 2 %}previous{% else %}{% if step > 1 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} ">
             {% if step == 2 or step == 3 or step == 4 %}
@@ -60,5 +60,7 @@
             </span>
         </li>
     {% endspaceless %}
-  </ul><!-- /navbar-inner -->
-</nav><!-- /navbar -->
+    </ul><!-- /navbar-inner -->
+</div>
+
+
