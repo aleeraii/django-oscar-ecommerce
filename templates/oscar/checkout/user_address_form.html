@@ -14,19 +14,20 @@
     {% include 'oscar/checkout/nav.html' with step=1 %}
 {% endblock %}
 
-{% block checkout_title %}{% trans "Edit address" %}{% endblock %}
 
 {% block shipping_address %}
-    <div class="card card-body bg-light">
-        <form id="update_user_address" method="post">
-            {% csrf_token %}
-            {% include "oscar/partials/form_fields.html" with form=form style='horizontal' %}
-            <div class="form-group row">
+ <div class="shop-cart-table check-out-wrap">
+    <div class="col-md-8 mt-xs-30">
+        <div class="billing-details pl-20">
+            <form id="update_user_address" method="post">
+                 {% csrf_token %}
+                {% include "oscar/partials/form_fields.html" with form=form style='horizontal' %}
                 <div class="offset-sm-4 col-sm-8">
-                    <button type="submit" class="btn btn-lg btn-primary" data-loading-text="{% trans 'Saving...' %}">{% trans "Save" %}</button>
-                    {% trans "or" %} <a href="{% url 'checkout:shipping-address' %}">{% trans "cancel" %}</a>.
+                  <button type="submit"  data-text="Submit" class="button-one submit-button mt-15" data-loading-text="{% trans 'Continuing...' %}">{% trans "Continue" %}</button>
+                    {% trans "or" %} <a href="{% url 'basket:summary' %}">{% trans "return to basket" %}</a>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
+ </div>
 {% endblock shipping_address %}
