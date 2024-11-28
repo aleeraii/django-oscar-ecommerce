@@ -24,12 +24,11 @@
         {% block shipping_address %}
             <div class="col-sm-6">
                 <div class="sub-header">
-                    <h2>{% trans "Shipping" %}</h2>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping" %}</h4>
                 </div>
                 {% if shipping_address %}
                     <div class="card card-body bg-light">
-                        <h3>
-                          {% trans "Address" %}
+                        <h4 class="title-1 title-border text-uppercase mb-30"> {% trans "Address" %}</h4>
                           {% block shipping_address_actions %}
                             <a href="{% url 'checkout:shipping-address' %}" class="float-right">
                                 {% trans "Change" %}
@@ -171,3 +170,4 @@
     {% endblock place_order %}
 
 {% endblock content %}
+

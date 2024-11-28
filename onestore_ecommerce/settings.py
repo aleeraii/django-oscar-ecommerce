@@ -120,6 +120,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
