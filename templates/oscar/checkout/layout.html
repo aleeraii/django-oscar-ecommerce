@@ -28,7 +28,7 @@
     </div>
  {% endblock breadcrumbs %}
 
-     <header class="header container">
+     <header class="container">
          {% block checkout_nav %}{% endblock %}
      </header><!-- /header -->
 
@@ -59,8 +59,11 @@
                 {% endfor %}
             {% endblock %}
 
-           <div class="bg-dark-white">{% block content %}{% endblock %}</div>
-
+             <div class="bg-dark-white">
+                 <div class="col-sm-6">&nbsp;</div>
+                 {% block content %}{% endblock %}
+                <div class="col-sm-6">&nbsp;</div>
+             </div>
         </div><!-- /page_inner -->
     </div>
     {% include "oscar/partials/footer_checkout.html" %}

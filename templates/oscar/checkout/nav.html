@@ -1,66 +1,121 @@
 {% load i18n %}
 
-<div class="shopping-cart-area  pt-80 pb-80">
-    <ul class="cart-page-menu nav row clearfix mb-30">
-    {% spaceless %}
-        <li class="nav-item step1 {% if step == 1 %}active{% else %}{% if step == 2 %}previous{% else %}{% if step > 1 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} ">
-            {% if step == 2 or step == 3 or step == 4 %}
-                <a href="{% url 'checkout:shipping-address' %}" class="nav-link">
-                    <i class="fas fa-chevron-right"></i>
-                    <span>
-                        {% trans "1. Shipping address" %}
+<br/><br/>
+<div class="bg-dark-white">
+    <ul class="steps-list nav row clearfix mb-30">
+        {% spaceless %}
+            <li class="nav-item step1 {% if step == 1 %}active{% else %}{% if step == 2 %}previous{% else %}{% if step > 1 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+                {% if step == 2 or step == 3 or step == 4 %}
+                    <a href="{% url 'checkout:shipping-address' %}" class="nav-link">
+                        <span>
+                            {% trans "1. SHIPPING ADDRESS" %}
+                        </span>
+                    </a>
+                {% else %}
+                    <span class="navbar-text">
+                        {% trans "1. SHIPPING ADDRESS" %}
                     </span>
-                </a>
-            {% else %}
-                <span class="navbar-text">
-                    {%  trans "1. Shipping address" %}
-                </span>
-            {% endif %}
-        </li>
+                {% endif %}
+            </li>
 
-        <li class="nav-item step2 {% if step == 2 %}active{% else %}{% if step == 3 %}previous{% else %}{% if step > 2 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} ">
-            {% if step == 3 or step == 4 %}
-                <a href="{% url 'checkout:shipping-method' %}" class="nav-link">
-                    <i class="fas fa-chevron-right"></i>
-                    <span>
-                        {% trans "2. Shipping method" %}
+            <li class="nav-item step2 {% if step == 2 %}active{% else %}{% if step == 3 %}previous{% else %}{% if step > 2 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+                {% if step == 3 or step == 4 %}
+                    <a href="{% url 'checkout:shipping-method' %}" class="nav-link">
+                        <span>
+                            {% trans "2. SHIPPING METHOD" %}
+                        </span>
+                    </a>
+                {% else %}
+                    <span class="navbar-text">
+                        {% trans "2. SHIPPING METHOD" %}
                     </span>
-                </a>
-            {% else %}
-                <span class="navbar-text">
-                    {%  trans "2. Shipping method" %}
-                </span>
-            {% endif %}
-        </li>
+                {% endif %}
+            </li>
 
-        <li class="nav-item step3 {% if step == 3 %}active{% else %}{% if step == 4 %}previous{% else %}{% if step > 3 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} ">
-            {% if step == 4 %}
-                <a href="{% url 'checkout:payment-details' %}" class="nav-link">
-                    <i class="fas fa-chevron-right"></i>
-                    <span>
-                        {% trans "3. Payment" %}
+            <li class="nav-item step3 {% if step == 3 %}active{% else %}{% if step == 4 %}previous{% else %}{% if step > 3 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+                {% if step == 4 %}
+                    <a href="{% url 'checkout:payment-details' %}" class="nav-link">
+                        <span>
+                            {% trans "3. PAYMENT" %}
+                        </span>
+                    </a>
+                {% else %}
+                    <span class="navbar-text">
+                        {% trans "3. PAYMENT" %}
                     </span>
-                </a>
-            {% else %}
+                {% endif %}
+            </li>
+
+            <li class="nav-item step4 {% if step == 4 %}active{% else %}disabled{% endif %} step-box">
                 <span class="navbar-text">
-                    {%  trans "3. Payment" %}
+                    {% trans "4. PREVIEW" %}
                 </span>
-            {% endif %}
-        </li>
+            </li>
 
-        <li class="nav-item step4 {% if step == 4 %}active{% else %}disabled{% endif %} ">
-            <span class="navbar-text">
-                {% trans "4. Preview" %}
-            </span>
-        </li>
-
-        <li class="nav-item step5 {% if step == 5 %}active{% else %}disabled{% endif %} ">
-            <span class="navbar-text">
-                {% trans "5. Confirmation" %}
-            </span>
-        </li>
-    {% endspaceless %}
-    </ul><!-- /navbar-inner -->
+            <li class="nav-item step5 {% if step == 5 %}active{% else %}disabled{% endif %} step-box">
+                <span class="navbar-text">
+                    {% trans "5. CONFIRMATION" %}
+                </span>
+            </li>
+        {% endspaceless %}
+    </ul>
 </div>
+<style>
+/* Make the entire list a flex container */
+.steps-list {
+    display: flex; /* Use flexbox layout */
+    justify-content: space-between; /* Evenly space out the steps */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    list-style: none; /* Remove default list styling */
+}
 
+/* Styling for each step box */
+.step-box {
+    background-color: white; /* White background */
+    padding: 10px 20px; /* Padding inside the box */
+    margin: 5px; /* Spacing between boxes */
+    text-align: center; /* Center the text */
+    flex: 1; /* Allow the items to grow and take equal space */
+}
 
+/* Active step style */
+.step-box.active {
+    background: #c8a165 none repeat scroll 0 0;
+    color: #fff;
+}
+/* Visited step style */
+.step-box.visited {
+    color: black;
+}
+
+/* Disabled or visited state style */
+.step-box.disabled {
+    color: #aaa; /* Lighter text color */
+    background-color: #e0e0e0; /* Light gray background */
+
+}
+.step-box.visited {
+    color:black;
+}
+/* Specific style for step text inside the box */
+.navbar-text {
+    display: block; /* Ensure text is on a new line */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Icon styling */
+.nav-link i {
+    margin-right: 10px; /* Space between icon and text */
+    font-size: 18px; /* Icon size */
+    vertical-align: middle; /* Align icon with text */
+}
+.nav-link {
+    color:#c0a16b;
+}
+.nav
+{
+    --bs-nav-link-hover-color: var(--bs-link-hover-color);
+}
+</style>
