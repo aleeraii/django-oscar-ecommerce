@@ -5,6 +5,8 @@
 <div id="basket_totals">
     <table class="table">
         <tbody>
+        <th>Product</th>
+        <th class="text-end">Total</th>
             {% with offer_discounts=basket.offer_discounts voucher_discounts=basket.grouped_voucher_discounts %}
                 {% block discount_totals %}
                     {% if offer_discounts or voucher_discounts %}
