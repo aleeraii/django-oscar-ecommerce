@@ -56,7 +56,7 @@
                             </address>
 
                         {% if shipping_address.phone_number %}
-                            <h4>{% trans "Contact" %}</h4>
+                            <h4 class="title-1 title-border">{% trans "Contact" %}</h4>
                             <p>
                                 {% trans "Phone" %}: {{ shipping_address.phone_number }}
                                 {% if guest_email %}
@@ -114,10 +114,10 @@
         <div class="sub-header">
             <div class="">
             {% block order_contents_actions %}
-                 <div class="col-sm-6">&nbsp;</div>
                 <a href="{% url 'basket:summary' %}" class="floatright" style="color:#c8a165">
                     {% trans "Edit order contents" %}
                 </a>
+                 <div class="col-sm-6">&nbsp;</div>
                  <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Order contents" %} </h4>
             {% endblock %}
             </div>
@@ -211,7 +211,7 @@
             <div class="row">
                 <div class="col-sm-6">&nbsp;</div>
                     <div class="col-sm-6">
-                         <div class="customer-login payment-details mt-20">
+                         <div class="payment-details mt-20">
                             <h2 class="title-1 title-border text-uppercase mb-30">{% trans 'Totals' %}</h2>
                             {% include 'oscar/basket/partials/basket_totals.html' %}
                         </div>

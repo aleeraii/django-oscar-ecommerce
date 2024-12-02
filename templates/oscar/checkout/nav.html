@@ -4,7 +4,7 @@
 <div class="bg-dark-white">
     <ul class="steps-list nav row clearfix mb-30">
         {% spaceless %}
-            <li class="nav-item step1 {% if step == 1 %}active{% else %}{% if step == 2 %}previous{% else %}{% if step > 1 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+            <li class="nav-item step1 {% if step == 1 %}active{% else %}{% if step == 2 %}previous{% else %}{% if step > 1 and step < 5 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
                 {% if step == 2 or step == 3 or step == 4 %}
                     <a href="{% url 'checkout:shipping-address' %}" class="nav-link">
                         <span>
@@ -18,7 +18,7 @@
                 {% endif %}
             </li>
 
-            <li class="nav-item step2 {% if step == 2 %}active{% else %}{% if step == 3 %}previous{% else %}{% if step > 2 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+            <li class="nav-item step2 {% if step == 2 %}active{% else %}{% if step == 3 %}previous{% else %}{% if step > 2 and step < 5 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
                 {% if step == 3 or step == 4 %}
                     <a href="{% url 'checkout:shipping-method' %}" class="nav-link">
                         <span>
@@ -32,7 +32,7 @@
                 {% endif %}
             </li>
 
-            <li class="nav-item step3 {% if step == 3 %}active{% else %}{% if step == 4 %}previous{% else %}{% if step > 3 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
+            <li class="nav-item step3 {% if step == 3 %}active{% else %}{% if step == 4 %}previous{% else %}{% if step > 3 and step < 5 %}visited{% else %}disabled{% endif %}{% endif %}{% endif %} step-box">
                 {% if step == 4 %}
                     <a href="{% url 'checkout:payment-details' %}" class="nav-link">
                         <span>
@@ -68,6 +68,7 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margin */
     list-style: none; /* Remove default list styling */
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
 }
 
 /* Styling for each step box */
@@ -86,23 +87,18 @@
 }
 /* Visited step style */
 .step-box.visited {
-    color: black;
+    color: #c0a16b;
 }
 
 /* Disabled or visited state style */
 .step-box.disabled {
     color: #aaa; /* Lighter text color */
     background-color: #e0e0e0; /* Light gray background */
+}
 
-}
-.step-box.visited {
-    color:black;
-}
 /* Specific style for step text inside the box */
 .navbar-text {
     display: block; /* Ensure text is on a new line */
-    font-size: 16px;
-    font-weight: bold;
 }
 
 /* Icon styling */
@@ -111,11 +107,21 @@
     font-size: 18px; /* Icon size */
     vertical-align: middle; /* Align icon with text */
 }
+
 .nav-link {
     color:#c0a16b;
 }
-.nav
-{
-    --bs-nav-link-hover-color: var(--bs-link-hover-color);
+
+/* Adjust layout for mobile and small screens */
+@media (max-width: 767px) {
+    .steps-list {
+        flex-direction: column; /* Stack the steps vertically */
+        align-items: stretch; /* Stretch each step to full width */
+    }
+
+    .step-box {
+        width: 100%; /* Make each step box take full width on small screens */
+        margin: 10px 0; /* Add margin for spacing between steps */
+    }
 }
 </style>
