@@ -145,6 +145,7 @@
                                     <div class="customer-login payment-details mt-30">
                                         <h4 class="title-1 title-border text-uppercase">payment details</h4>
                                         {% include 'oscar/basket/partials/basket_totals.html' with editable=1 %}
+                                        <a href="{% url 'checkout:index' %}" data-text="checkout" class="button-one submit-button mt-15"><i class="fas fa-shopping-cart"></i> {% trans "Checkout" %}</a>
                                     </div>
                                 </div>
                                 {% endblock baskettotals %}

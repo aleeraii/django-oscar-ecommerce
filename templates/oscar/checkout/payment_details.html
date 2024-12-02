@@ -9,7 +9,6 @@
     {% include 'oscar/checkout/nav.html' with step=3 %}
 {% endblock %}
 
-{% block checkout_title %}{% trans "Enter payment details" %}{% endblock %}
 
 {% block order_contents %}{% endblock %}
 {% block shipping_address %}{% endblock %}
@@ -17,14 +16,49 @@
 {% block payment_method %}{% endblock %}
 
 {% block payment_details %}
-    {% block payment_details_content %}
-        <p>{% trans "This page needs implementing within your project.  You may want to use one of Oscar's payment gateway libraries:" %}</p>
-        <ul>
-            <li><a href="https://github.com/django-oscar/django-oscar-paypal">django-oscar-paypal</a></li>
-            <li><a href="https://github.com/django-oscar/django-oscar-adyen">django-oscar-adyen</a></li>
-            <li><a href="https://github.com/django-oscar/django-oscar-docdata">django-oscar-docdata</a></li>
-            <li><a href="https://github.com/django-oscar/django-oscar-accounts">django-oscar-accounts</a></li>
-        </ul>
-        <a id="view_preview" href="{% url 'checkout:preview' %}" class="btn btn-primary btn-lg">{% trans "Continue" %}</a>
+   {% block payment_details_content %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping-cart">
+                    <div class="shop-cart-table check-out-wrap">
+                            <h4 class="title-1 title-border text-uppercase mb-30">Enter your payment details</h4>
+                           <!-- payment-method -->
+                            <div class="col-md-6">
+                                <div class="payment-method mt-60  pl-20">
+                                    <h4 class="title-1 title-border text-uppercase mb-30">payment method</h4>
+                                    <div class="payment-accordion">
+                                        <!-- Accordion start  -->
+                                        <h3 class="payment-accordion-toggle active">Django Oscar Paypal</h3>
+                                        <div class="payment-content default">
+                                            <p>Make your payment directly into our Paypal account. Please use your Order ID as the payment reference. Your order won't be shipped until the funds have cleared in our account.    <li><a href="https://github.com/django-oscar/django-oscar-paypal">django-oscar-paypal</a></li></p>
+                                        </div>
+                                        <!-- Accordion end -->
+                                        <!-- Accordion start -->
+                                        <h3 class="payment-accordion-toggle">Django Oscar Adyen </h3>
+                                        <div class="payment-content">
+                                            <p>Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. <li><a href="https://github.com/django-oscar/django-oscar-adyen">django-oscar-adyen</a></li></p>
+                                        </div>
+                                        <!-- Accordion end -->
+                                        <!-- Accordion start -->
+                                        <h3 class="payment-accordion-toggle">Django Oscar Docdata </h3>
+                                        <div class="payment-content">
+                                            <p>Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. <li><a href="https://github.com/django-oscar/django-oscar-docdata">django-oscar-docdata</a></li></p>
+                                        </div>
+                                        <!-- Accordion end -->
+                                        <!-- Accordion start -->
+                                        <h3 class="payment-accordion-toggle">Django Oscar Accounts</h3>
+                                        <div class="payment-content">
+                                            <p>Pay via Accounts; you can pay with your django accounts card if you dont have a PayPal account.  <li><a href="https://github.com/django-oscar/django-oscar-accounts">django-oscar-accounts</a></li></p>
+                                        </div>
+                                        <!-- Accordion end -->
+                                          <a id="view_preview" href="{% url 'checkout:preview' %}" class="button-one submit-button mt-15" data-text="Continue">{% trans "Continue" %}</a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endblock payment_details_content %}
 {% endblock payment_details %}
+

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(h@!^^v1j7^6#6%s4(oqg_x*gtl!cje82%ng=3@(a!s#762&cd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -120,6 +120,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -190,4 +192,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-OSCAR_PRODUCTS_PER_PAGE = 5
+OSCAR_PRODUCTS_PER_PAGE = 9
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://332c-116-58-44-74.ngrok-free.app',
+]

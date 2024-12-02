@@ -4,16 +4,35 @@
 
 {% block layout %}
 
-    <header class="header container">
-        <div class="page_inner">
-            <div class="row">
-                {% include "oscar/partials/brand.html" %}
-            </div><!-- /row -->
-        </div>
-        {% block checkout_nav %}{% endblock %}
-    </header><!-- /header -->
+ {% include "oscar/partials/nav_primary.html" %}
 
-    <div class="container page">
+ {% block breadcrumbs %}
+    <div class="heading-banner-area overlay-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="heading-banner">
+                        <div class="heading-banner-title">
+                            <h2>{% block heading_title %}{% trans "Checkout" %}{% endblock heading_title %}</h2>
+                        </div>
+                        <div class="breadcumbs pb-15">
+                            <ul>
+                                <li><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                                <li>{% block breadcrumb_summary %}Checkout{% endblock breadcrumb_summary %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ {% endblock breadcrumbs %}
+
+     <header class="container">
+         {% block checkout_nav %}{% endblock %}
+     </header><!-- /header -->
+
+    <div class="">
        <div class="page_inner">
             {% include 'oscar/partials/alert_messages.html' %}
 
@@ -40,9 +59,13 @@
                 {% endfor %}
             {% endblock %}
 
-            {% block content %}{% endblock %}
-
+             <div class="bg-dark-white">
+                 <div class="col-sm-6">&nbsp;</div>
+                 {% block content %}{% endblock %}
+                <div class="col-sm-6">&nbsp;</div>
+             </div>
         </div><!-- /page_inner -->
     </div>
     {% include "oscar/partials/footer_checkout.html" %}
 {% endblock %}
+

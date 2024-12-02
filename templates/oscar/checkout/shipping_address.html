@@ -9,76 +9,94 @@
     {% include 'oscar/checkout/nav.html' with step=1 %}
 {% endblock %}
 
-{% block checkout_title %}{% trans "Shipping address" %}{% endblock %}
 
 {% block order_contents %}{% endblock %}
 
 {% block shipping_address %}
-<div class="col-sm-12">
-    <div class="sub-header">
-        <h2>{% trans "Where should we ship to?" %}</h2>
-    </div>
-    {% if user.is_authenticated %}
-        {% if addresses %}
-            <h3>{% trans "An address from your address book?" %}</h3>
-            <div class="choose-block">
-                <div class="row">
-                    {% for address in addresses %}
-                        {% block select_address_form %}
-                            <div class="col-sm-6 d-flex">
-                                <div class="card card-body bg-light">
-                                    <address>
-                                        {% block select_address_fields %}
-                                            {% for field in address.active_address_fields %}
-                                                <span>{{ field }}</span>{% if not forloop.first %}<br/>{% endif %}
-                                            {% endfor %}
-                                        {% endblock %}
-                                    </address>
-                                    <form action="{% url 'checkout:shipping-address' %}" method="post" id="select_shipping_address_{{ address.id }}" class="mb-0">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="ship_to" />
-                                        <input type="hidden" name="address_id" value="{{ address.id }}" />
-                                        {% if address.is_default_for_shipping %}
-                                            <button type="submit" class="btn btn-success btn-large ship-address" data-loading-text="{% trans 'Saving...' %}"><i class="fas fa-check-circle"></i> {% trans "Ship to your default shipping address" %}</button>
-                                        {% else %}
-                                            <button type="submit" class="btn btn-primary btn-large ship-address" data-loading-text="{% trans 'Saving...' %}">{% trans "Ship to this address" %}</button>
-                                        {% endif %}
+<div class="">
+    <div class="">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping-cart">
+                    <div class="shop-cart-table check-out-wrap">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="billing-details pr-20">
+                                    <h4 class="title-1 title-border text-uppercase mb-30">An address from your address book?</h4>
+                                    {% if user.is_authenticated %}
+                                        {% if addresses %}
+                                            <div class="row">
+                                                {% for address in addresses %}
+                                                    {% if forloop.counter <= 3 %}
+                                                        <div>
+                                                            <address>
+                                                                {% for field in address.active_address_fields %}
+                                                                    {% if forloop.first %}
+                                                                        <b>{{ field }}</b><br/>
+                                                                    {% else %}
+                                                                        {{ field }}<br/>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </address>
+                                                            <form action="{% url 'checkout:shipping-address' %}" method="post" id="select_shipping_address_{{ address.id }}" class="mb-0">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="action" value="ship_to" />
+                                                                <input type="hidden" name="address_id" value="{{ address.id }}" />
 
-                                        <div class="btn-group address-controls">
-                                            <a href="{% url 'checkout:user-address-update' pk=address.id %}" class="btn btn-secondary">{% trans "Edit address" %}</a>
-                                            <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"></button>
-                                            <ul class="dropdown-menu">
-                                                <a href="{% url 'checkout:user-address-delete' pk=address.id %}" class="btn-remove-address nav-link">{% trans "Delete" %}</a>
-                                            </ul>
-                                        </div>
+                                                                {% if address.is_default_for_shipping %}
+                                                                    <button type="submit" class="button-one submit-button mt-15" data-loading-text="{% trans 'Saving...' %}">
+                                                                        <i class="fas fa-check-circle"></i> {% trans "Ship to your default shipping address" %}
+                                                                    </button>
+                                                                {% else %}
+                                                                  <button type="submit" data-text="Ship to this address" class="button-one submit-button mt-15" data-loading-text="{% trans 'Saving...' %}">{% trans "Ship to this address" %}</button>
+                                                                {% endif %}
+                                                                  <a href="{% url 'checkout:user-address-update' pk=address.id %}" class="btn btn-secondary" style="padding:1%; margin-bottom:0.5%">{% trans "Edit address" %}</a>
+                                                                  <a href="{% url 'checkout:user-address-delete' pk=address.id %}" class="btn btn-secondary text-white" style="padding: 1%; margin-bottom: 0.5%;">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </a>
+                                                            </form>
+                                                            </br>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if forloop.counter|divisibleby:2 %}
+                                                        </div><div class="row">
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% block new_address_form %}
+                            <div class="col-md-6 mt-xs-30">
+                                <div class="billing-details pl-20">
+                                    <h4 class="title-1 title-border text-uppercase mb-30">Ship to a different address</h4>
+                                    <form action="{% url 'checkout:shipping-address' %}" method="post" id="new_shipping_address">
+                                        {% csrf_token %}
+                                        <input type="text" class="text-gray" name="first_name" maxlength="255" placeholder="First name" required id="id_first_name">
+                                        <input type="text" class="text-gray" name="last_name" maxlength="255" placeholder="Last name" required id="id_last_name">
+                                        <input type="text" class="text-gray" name="line1" maxlength="255" placeholder="First line of address" required id="id_line1">
+                                        <input type="text" class="text-gray" name="line2" maxlength="255" placeholder="Second line of address" id="id_line2">
+                                        <input type="text" class="text-gray" name="line3" maxlength="255" placeholder="Third line of address" id="id_line3">
+                                        <input type="text" class="text-gray" name="line4" maxlength="255" placeholder="City" required id="id_line4">
+                                        <input type="text" class="text-gray" name="state" maxlength="255" placeholder="State/Country" id="id_state">
+                                        <input type="text" class="text-gray" name="postcode" maxlength="64" placeholder="Post/Zip code" required id="id_postcode">
+                                        <input type="text" class="text-gray" name="phone_number" maxlength="128" placeholder="Phone number" id="id_phone_number">
+                                        <textarea name="notes" class="custom-textarea" cols="40" rows="10" placeholder="Any instructions" id="id_notes"></textarea>
+
+                                        <button type="submit" class="button-one submit-button mt-15" data-text="continue" data-loading-text="{% trans 'Continuing...' %}">{% trans "Continue" %}</button>
+                                        {% trans "or" %} <a href="{% url 'basket:summary' %}">{% trans "return to basket" %}</a>
                                     </form>
                                 </div>
                             </div>
-                            {% if forloop.counter|divisibleby:2 %}
-                                </div><div class="row">
-                            {% endif %}
-                        {% endblock %}
-                    {% endfor %}
-                </div>
-            </div>
-            <h3>{% trans "Or a new address?" %}</h3>
-        {% endif %}
-    {% endif %}
-
-    {% block new_address_form %}
-        <div class="card card-body bg-light">
-            <form action="{% url 'checkout:shipping-address' %}" method="post" id="new_shipping_address">
-                {% csrf_token %}
-                {% include "oscar/partials/form_fields.html" with form=form style='horizontal' %}
-                <div class="form-group row">
-                    <div class="offset-sm-4 col-sm-8">
-                        <button type="submit" class="btn btn-lg btn-primary" data-loading-text="{% trans 'Continuing...' %}">{% trans "Continue" %}</button>
-                        {% trans "or" %} <a href="{% url 'basket:summary' %}">{% trans "return to basket" %}</a>
+                            {% endblock new_address_form %}
+                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-    {% endblock %}
+    </div>
 </div>
 {% endblock shipping_address %}
 

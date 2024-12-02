@@ -32,12 +32,13 @@
         <link rel="stylesheet" href="{% static 'oscar/css/style.min.css' %}">
         <link rel="stylesheet" href="{% static 'oscar/css/shortcode.css' %}">
         <link rel="stylesheet" href="{% static 'oscar/css/responsive.css' %}">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
         {% endblock %}
 
 
         {% block extrahead %}{% endblock %}
     </head>
-    <body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}default{% endblock %}">
+    <body id="{% block body_id %}default{% endblock %}" class="{% block body_class %}default{% endblock %}"  style="background:#f6f6f6">
         {% block layout %}
         {% endblock %}
 
