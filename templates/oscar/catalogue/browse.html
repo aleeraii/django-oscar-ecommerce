@@ -84,58 +84,58 @@
     </aside>
     <!-- Widget-Categories end -->
 
-    <!-- Shop-Filter start -->
-    <aside class="widget shop-filter mb-30">
-        <div class="widget-title">
-            <h4>{% trans "Price" %}</h4>
-        </div>
-        <div class="widget-info">
-            <div class="price_filter">
-                <div class="price_slider_amount">
-                    <input type="submit" value="Your range:" />
-                    <input type="text" id="amount" name="price" placeholder="Add Your Price" />
-                </div>
-                <div id="slider-range"></div>
-            </div>
-        </div>
-    </aside>
-    <!-- Shop-Filter end -->
+<!--    &lt;!&ndash; Shop-Filter start &ndash;&gt;-->
+<!--    <aside class="widget shop-filter mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Price" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info">-->
+<!--            <div class="price_filter">-->
+<!--                <div class="price_slider_amount">-->
+<!--                    <input type="submit" value="Your range:" />-->
+<!--                    <input type="text" id="amount" name="price" placeholder="Add Your Price" />-->
+<!--                </div>-->
+<!--                <div id="slider-range"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Shop-Filter end &ndash;&gt;-->
 
-    <!-- Widget-Color start -->
-    <aside class="widget widget-color mb-30">
-        <div class="widget-title">
-            <h4>{% trans "Color" %}</h4>
-        </div>
-        <div class="widget-info color-filter clearfix">
-            <ul>
-                <li><a href="#"><span class="color color-1"></span>LightSalmon<span class="count">12</span></a></li>
-                <li><a href="#"><span class="color color-2"></span>Dark Salmon<span class="count">20</span></a></li>
-                <li><a href="#"><span class="color color-3"></span>Tomato<span class="count">59</span></a></li>
-                <li><a class="active" href="#"><span class="color color-4"></span>Deep Sky Blue<span class="count">45</span></a></li>
-                <li><a href="#"><span class="color color-5"></span>Electric Purple<span class="count">78</span></a></li>
-                <li><a href="#"><span class="color color-6"></span>Atlantis<span class="count">10</span></a></li>
-                <li><a href="#"><span class="color color-7"></span>Deep Lilac<span class="count">15</span></a></li>
-            </ul>
-        </div>
-    </aside>
-    <!-- Widget-Color end -->
+<!--    &lt;!&ndash; Widget-Color start &ndash;&gt;-->
+<!--    <aside class="widget widget-color mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Color" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info color-filter clearfix">-->
+<!--            <ul>-->
+<!--                <li><a href="#"><span class="color color-1"></span>LightSalmon<span class="count">12</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-2"></span>Dark Salmon<span class="count">20</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-3"></span>Tomato<span class="count">59</span></a></li>-->
+<!--                <li><a class="active" href="#"><span class="color color-4"></span>Deep Sky Blue<span class="count">45</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-5"></span>Electric Purple<span class="count">78</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-6"></span>Atlantis<span class="count">10</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-7"></span>Deep Lilac<span class="count">15</span></a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Widget-Color end &ndash;&gt;-->
 
-    <!-- Widget-Size start -->
-    <aside class="widget widget-size mb-30">
-        <div class="widget-title">
-            <h4>{% trans "Size" %}</h4>
-        </div>
-        <div class="widget-info size-filter clearfix">
-            <ul>
-                <li><a href="#">M</a></li>
-                <li><a class="active" href="#">S</a></li>
-                <li><a href="#">L</a></li>
-                <li><a href="#">SL</a></li>
-                <li><a href="#">XL</a></li>
-            </ul>
-        </div>
-    </aside>
-    <!-- Widget-Size end -->
+<!--    &lt;!&ndash; Widget-Size start &ndash;&gt;-->
+<!--    <aside class="widget widget-size mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Size" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info size-filter clearfix">-->
+<!--            <ul>-->
+<!--                <li><a href="#">M</a></li>-->
+<!--                <li><a class="active" href="#">S</a></li>-->
+<!--                <li><a href="#">L</a></li>-->
+<!--                <li><a href="#">SL</a></li>-->
+<!--                <li><a href="#">XL</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Widget-Size end &ndash;&gt;-->
 </div>
 <!-- End of Left Sidebar -->
 </div>
@@ -183,7 +183,7 @@
                     {% if products %}
                         <section>
                             <div>
-                                <ol class="row list-unstyled ml-0 pl-0">
+                                <ol class="row list-unstyled">
                                     {% for product in products %}
                                         {% include "oscar/catalogue/partials/product_grid.html" with product=product %}
                                     {% endfor %}
@@ -203,7 +203,7 @@
                     {% if products %}
                         <section>
                             <div>
-                                <ol class="row list-unstyled ml-0 pl-0">
+                                <ol class="row list-unstyled">
                                     {% for product in products %}
                                         {% render_product product %}
                                     {% endfor %}

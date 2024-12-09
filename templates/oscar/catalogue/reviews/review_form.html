@@ -9,29 +9,6 @@
     <form method="post" action="{% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id %}" id="add_review_form">
         {% csrf_token %}
 
-        <!-- Rating Section -->
-        <div class="your-rating mb-30">
-            <p class="mb-10"><strong>{% trans "Your Rating" %}</strong></p>
-
-            <div class="stars">
-                <!-- Only 5 stars here -->
-                <span class="star" data-score="1">
-                    <i class="zmdi zmdi-star-outline"></i>
-                </span>
-                <span class="star" data-score="2">
-                    <i class="zmdi zmdi-star-outline"></i>
-                </span>
-                <span class="star" data-score="3">
-                    <i class="zmdi zmdi-star-outline"></i>
-                </span>
-                <span class="star" data-score="4">
-                    <i class="zmdi zmdi-star-outline"></i>
-                </span>
-                <span class="star" data-score="5">
-                    <i class="zmdi zmdi-star-outline"></i>
-                </span>
-            </div>
-        </div>
 
         <!-- Hidden Input for Rating Score -->
         <input type="hidden" name="score" id="rating-score" required />
@@ -75,10 +52,84 @@
             </div>
         </div>
 
+                <!-- Rating Section -->
+        <div class="your-rating mb-30">
+<!--            <p class="mb-10"><strong>{% trans "Your Rating" %}</strong></p>-->
+
+            <div class="stars">
+                <!-- Only 5 stars here -->
+                <span class="star" data-score="1">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="2">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="3">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="4">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="5">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+            </div>
+        </div>
+
         <!-- Submit Button -->
         <button type="submit" data-text="submit review" class="button-one submit-button mt-20" id="submit-review-btn">{% trans 'Submit Review' %}</button>
     </form>
 </div>
+<style>
+.stars {
+    display: flex;
+    justify-content: center;  /* Centers the stars horizontally */
+    gap: 5px;  /* Space between the stars */
+    font-size: 30px; /* Increases the size of the stars */
+}
+
+.star i {
+    font-size: 30px;  /* Make the stars even larger */
+    color: #ccc;  /* Default color (light grey) */
+    cursor: pointer;
+    transition: color 0.3s ease;  /* Smooth color transition */
+}
+
+/* Change the color of stars when selected */
+.star i.zmdi-star {
+    color: #c0a16b;  /* Golden color when the star is selected */
+}
+
+.star i.zmdi-star-outline {
+    color: #ccc;  /* Light grey color for unselected stars */
+}
+
+
+/* Styling for the Submit button */
+.submit-button {
+    display: block;
+    margin: 30px auto 0;  /* Center the submit button and add top margin */
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* Additional margin adjustments for the form fields */
+.row {
+    margin-bottom: 15px;
+}
+
+.col-md-6 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+</style>
 {% endblock %}
 
 {% block extrascripts %}
@@ -139,3 +190,4 @@
     });
 </script>
 {% endblock %}
+

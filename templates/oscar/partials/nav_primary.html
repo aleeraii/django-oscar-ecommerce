@@ -1,5 +1,6 @@
 {% load currency_filters %}
 {% load category_tags %}
+{% load image_tags %}
 {% load i18n %}
 {% load static %}
 
@@ -14,7 +15,7 @@
                     <div class="col-md-4 offset-md-4 col-7">
                         <div class="logo text-md-center">
                             <a href="{% url 'catalogue:index' %}">
-                                <img src="{% static 'oscar/img/logo/logo.png' %}" alt="Logo" />
+                                <img src="{% static 'oscar/img/logo/logo.svg' %}" alt="Logo" />
                             </a>
                         </div>
                     </div>
@@ -36,20 +37,29 @@
                                             {% for line in request.basket.all_lines %}
                                                 <div class="single-cart clearfix">
                                                     <div class="cart-photo">
-                                                        <!--<img src="{{ line.product.primary_image.url }}" alt="{{ line.product.title }}" />-->
-                                                        <a href="#"><img img src="{% static 'oscar/img/cart/1.jpg' %}" alt="{{ line.product.title }}" /></a>
+                                                        {% with image=line.product.primary_image %}
+                                                            {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
+                                                            <a href="{{ line.product.get_absolute_url }}">
+                                                                <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}">
+                                                            </a>
+                                                        {% endwith %}
                                                     </div>
                                                     <div class="cart-info">
                                                         <h5><a href="#">{{ line.product.title }}</a></h5>
-                                                        <p class="mb-0">Price: {{ line.line_price|currency:request.basket.currency }}</p>
+<!--                                                        <p class="mb-0">Price: {{ line.line_price|currency:request.basket.currency }}</p>-->
+                                                        <p class="mb-0">Price: {% include 'oscar/catalogue/partials/quick_basket_price.html' with product=line.product%}</p>
                                                         <p class="mb-0">Qty: {{ line.quantity }}</p>
-                                                        <span class="cart-delete"><a href="#"><i class="zmdi zmdi-close"></i></a></span>
+<!--                                                        <span class="cart-delete"><a href="#"><i class="zmdi zmdi-close"></i></a></span>-->
                                                     </div>
                                                 </div>
                                             {% endfor %}
                                         </div>
                                         <div class="cart-totals">
-                                            <h5 class="mb-0">Total <span class="floatright">{{ request.basket.total_incl_tax|currency:request.basket.currency }}</span></h5>
+                                            <h5 class="mb-0">
+                                              Total <span class="floatright ms-2">
+                                                {{ request.basket.total_incl_tax|currency:request.basket.currency }}
+                                              </span>
+                                            </h5>
                                         </div>
                                         <div class="cart-bottom clearfix">
                                             <a href="{% url 'basket:summary' %}" class="button-one floatleft text-uppercase" data-text="View cart">View cart</a>
@@ -75,96 +85,55 @@
             <nav>
                 <ul>
                     <li><a href="{% url 'catalogue:index' %}">Home</a>
-                       <div class="sub-menu menu-scroll">
-                                <ul>
-                                    <li class="menu-title">Page's</li>
-                                    <li><a href="{% url 'catalogue:index' %}">Home Version 1</a></li>
-                                    <li><a href="{% url 'catalogue:index' %}">Home Version 2</a></li>
-                                </ul>
-                            </div>
                     </li>
                     <li><a href="#">Products</a>
                         <div class="mega-menu menu-scroll">
                             <div class="table">
-                                <div class="table-cell">
+                                <div class="">
                                     <div class="half-width">
-                                        <ul>
-                                            <li class="menu-title">best brands</li>
-                                            <li><a href="#">henning koppel</a></li>
-                                            <li><a href="#">jehs + Laub</a></li>
-                                            <li><a href="#">vicke lindstrand</a></li>
-                                            <li><a href="#">don chadwick</a></li>
-                                            <li><a href="#">akiko kuwahata</a></li>
-                                            <li><a href="#">barbro berlin</a></li>
-                                            <li><a href="#">cecilia hall</a></li>
-                                            <li><a href="#">don chadwick</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="half-width">
-                                        <ul>
-                                            <li class="menu-title">popular brands</li>
-                                            <li><a href="#">akiko kuwahata</a></li>
-                                            <li><a href="#">barbro berlin</a></li>
-                                            <li><a href="#">cecilia hall</a></li>
-                                            <li><a href="#">don chadwick</a></li>
-                                            <li><a href="#">henning koppel</a></li>
-                                            <li><a href="#">jehs + Laub</a></li>
-                                            <li><a href="#">vicke lindstrand</a></li>
-                                            <li><a href="#">don chadwick</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="full-width">
-                                        <div class="mega-menu-img">
-                                            <a href="#"><img src="{% static 'oscar/img/megamenu/1.jpg' %}" alt="Mega Menu Image" /></a>
+                                    <!-- Widget-Categories start -->
+                                    <aside class="">
+                                        <div class="widget-title">
+                                            <h4>Categories</h4>
                                         </div>
+                                        <div>
+                                            <ul>
+                                                {% category_tree as tree_categories %}
+                                                {% if tree_categories %}
+                                                    {% for tree_category in tree_categories %}
+                                                    <li class="mt-2">
+                                                        <a href="{{ tree_category.url }}">
+                                                            {% if tree_category.pk == category.pk %}
+                                                                <strong>{{ tree_category.name }}</strong>
+                                                            {% else %}
+                                                                {{ tree_category.name }}
+                                                            {% endif %}
+                                                        </a>
+                                                        {% if tree_category.has_children %}<ul>{% else %}</li>{% endif %}
+                                                        {% for n in tree_category.num_to_close %}
+                                                            </ul></li>
+                                                        {% endfor %}
+                                                {% endfor %}
+
+                                                {% else %}
+                                                    <li>{% trans "No categories available." %}</li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    <!-- Widget-Categories end -->
                                     </div>
+
                                     <div class="pb-80"></div>
                                 </div>
                             </div>
                         </div>
                     </li>
 
-                    <li><a href="#">Shortcodes</a>
-                        <div class="sub-menu menu-scroll">
-                            <ul>
-                                <li class="menu-title">Shortcodes</li>
-                              <li>
-                                <a href="#">Accordion</a></li>
-                                <li><a href="#">Toggles</a></li>
-                                <li><a href="#">Tab</a></li>
-                                <li><a href="#">Product Tab</a></li>
-                                <li><a href="#">Product Tab 2</a></li>
-                                <li><a href="#">product carousel</a></li>
-                                <li><a href="#">product carousel 2</a></li>
-                                <li><a href="#">Featured Product</a></li>
-                                <li><a href="#">Featured Product 2</a></li>
-                                <li><a href="#">Button</a></li>
-                                <li><a href="#">Table</a></li>
-                                <li><a href="#">Progress Bar</a></li>
-                                <li><a href="https://codefulcrum.com/blogs/">Blog</a></li>
-                                <li><a href="https://codefulcrum.com/blogs/">Blog - 2</a></li>
-                                <li><a href="#">Team</a></li>
-                                <li><a href="#">Footer</a></li>
-                                <li><a href="#">Footer 2</a></li>
-                                <li><a href="#">Map</a></li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li><a href="#">Accessories</a></li>
-                    <li><a href="{% url 'catalogue:index' %}">Lookbook</a></li>
-                    <li><a href="https://codefulcrum.com/blogs/">Blog</a></li>
                     <li><a href="#">Pages</a>
                         <div class="sub-menu menu-scroll">
                             <ul>
                             <li class="menu-title">Page's</li>
                                 <li><a href="{% url 'catalogue:index' %}">Shop</a></li>
-                                <li><a href="#">Shop Sidebar</a></li>
-                                <li><a href="#">Shop Right Sidebar</a></li>
-                                <li><a href="#">Shop List</a></li>
-                                <li><a href="#">Shop List right sidebar</a></li>
-                                <li><a href="#">Single Product</a></li>
-                                <li><a href="#">Single Product Sidebar</a></li>
                                 <li><a href="{% url 'basket:summary' %}">Shopping Cart</a></li>
                                 <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
                                 <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
@@ -172,15 +141,9 @@
                                 <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
                                 <li><a href="{% url 'customer:logout' %}">logout</a></li>
                                 <li><a href="{% url 'customer:summary' %}">My Account</a></li>
-                                <li><a href="#">404</a></li>
-                                <li><a href="https://codefulcrum.com/blogs/">Blog</a></li>
-                                <li><a href="#">Single Blog</a></li>
-                                <li><a href="#">Single Blog Sidebar</a></li>
-                                <li><a href="https://codefulcrum.com/about-us/">About Us</a></li>
-                                <li><a href="https://codefulcrum.com/contact/">Contact</a></li>
                             </ul>
-                            <li><a href="https://codefulcrum.com/about-us/">about us</a></li>
-							<li><a href="https://codefulcrum.com/contact/">contact</a></li>
+                            <li><a href="#">about us</a></li>
+							<li><a href="#">contact</a></li>
                         </div>
                     </li>
                 </ul>
@@ -196,22 +159,11 @@
                         <nav id="dropdown">
                             <ul>
                                 <li><a href="{% url 'catalogue:index' %}">home</a>
-                                    <ul>
-                                        <li><a href="{% url 'catalogue:index' %}">Home Version 1</a></li>
-                                        <li><a href="{% url 'catalogue:index' %}">Home Version 2</a></li>
-                                    </ul>
                                 </li>
                                 <li><a href="{% url 'catalogue:index' %}">products</a></li>
-                                <li><a href="s{% url 'catalogue:index' %}">accesories</a></li>
-                                <li><a href="{% url 'catalogue:index' %}">lookbook</a></li>
-                                <li><a href="https://codefulcrum.com/blogs/">blog</a></li>
                                 <li><a href="#">pages</a>
                                     <ul>
                                         <li><a href="{% url 'catalogue:index' %}">Shop</a></li>
-                                        <li><a href="#">Shop Sidebar</a></li>
-                                        <li><a href="{% url 'catalogue:index' %}">Shop List</a></li>
-                                        <li><a href="#">Single Product</a></li>
-                                        <li><a href="#">Single Product Sidebar</a></li>
                                         <li><a href="{% url 'basket:summary' %}">Shopping Cart</a></li>
                                         <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
                                         <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
@@ -219,16 +171,10 @@
                                         <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
                                         <li><a href="{% url 'customer:logout' %}">logout</a></li>
                                         <li><a href="{% url 'customer:summary' %}">My Account</a></li>
-                                        <li><a href="#">404</a></li>
-                                        <li><a href="https://codefulcrum.com/blogs/">Blog</a></li>
-                                        <li><a href="#">Single Blog</a></li>
-                                        <li><a href="#">Single Blog Sidebar</a></li>
-                                        <li><a href="http://codefulcrum.com/about-us/">About Us</a></li>
-                                        <li><a href="https://codefulcrum.com/contact/">Contact</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="https://codefulcrum.com/about-us/">about us</a></li>
-                                <li><a href="https://codefulcrum.com/contact/">contact</a></li>
+                                <li><a href="#">about us</a></li>
+                                <li><a href="#">contact</a></li>
                             </ul>
                         </nav>
                     </div>

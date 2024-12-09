@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load product_tags %}
+{% load image_tags %}
 {% load static %}
 
  <aside class="widget widget-product mb-30">
@@ -13,14 +14,19 @@
                         <!-- Single-product start -->
                         <div class="single-product">
                             <div class="product-img">
+                                 {% with image=product.primary_image %}
+                                    {% oscar_thumbnail image.original "270x270" upscale=False as thumb %}
                                     <a href="{{ product.get_absolute_url }}">
-                                    <img src="{% static 'oscar/img/product/12.jpg' %}" alt="{{ product.title }}" />
-                                </a>
+                                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                                    </a>
+                                {% endwith %}
                             </div>
                             <div class="product-info">
-                                <h4 class="post-title">
+                               <a href="{{ product.get_absolute_url }}">
+                                   <h4 class="post-title">
                                     {{ product.title }}
-                                </h4>
+                                   </h4>
+                               </a>
                                 {% include "oscar/catalogue/partials/stock_record.html" %}
                             </div>
                         </div>
