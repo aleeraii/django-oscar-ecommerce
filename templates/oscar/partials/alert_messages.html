@@ -1,7 +1,7 @@
 {% load string_filters %}
 
 {% comment %}
-Use message tags to control these alerts.  Available tags include:
+Use message tags to control these alerts. Available tags include:
 - safe: allow HTML in the message
 - block: for longer messages - this adds extra padding
 - noicon: don't show an icon
@@ -11,30 +11,131 @@ Use message tags to control these alerts.  Available tags include:
 <div id="messages">
 {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-dismissible {% for tag in message.tags|split %}alert-{% if tag == 'error' %}danger{% else %}{{ tag }}{% endif %} {% endfor %} fade show">
-            <a class="close" data-dismiss="alert" href="#">&times;</a>
-            <div class="alertinner {% if 'noicon' not in message.tags %}wicon{% endif %}">
-                {% if 'noicon' not in message.tags %}
-                    {# Include an icon by default #}
-                    {% if 'success' in message.tags %}
-                        <i class="fas fa-check-circle"></i>
-                    {% elif 'info' in message.tags %}
-                        <i class="fas fa-info-circle"></i>
-                    {% elif 'warning' in message.tags %}
-                        <i class="fas fa-exclamation-triangle"></i>
-                    {% elif 'danger' in message.tags or 'error' in message.tags %}
-                        <i class="fas fa-exclamation-circle"></i>
-                    {% endif %}
+    <div class="alert alert-dismissible {% for tag in message.tags|split %}alert-{% if tag == 'error' %}danger{% else %}{{ tag }}{% endif %} {% endfor %} fade show alert-slide-in">
+        <!-- Removed Close button -->
+        <div class="alertinner {% if 'noicon' not in message.tags %}wicon{% endif %}">
+            {% if 'noicon' not in message.tags %}
+                {# Include an icon by default #}
+                {% if 'success' in message.tags %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif 'info' in message.tags %}
+                    <i class="fas fa-info-circle"></i>
+                {% elif 'warning' in message.tags %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% elif 'danger' in message.tags or 'error' in message.tags %}
+                    <i class="fas fa-exclamation-circle"></i>
                 {% endif %}
-
-                {# Allow HTML to be embedded in messages #}
-                {% if 'safe' in message.tags %}
-                    {{ message|safe }}
-                {% else %}
-                    {{ message }}
-                {% endif %}
-            </div>
+            {% endif %}
+            {# Allow HTML to be embedded in messages #}
+            {% if 'safe' in message.tags %}
+                {{ message|safe }}
+            {% else %}
+                {{ message }}
+            {% endif %}
         </div>
+        <!-- Progress bar under the alert -->
+        <div class="alert-progress-bar"></div>
+    </div>
     {% endfor %}
 {% endif %}
 </div>
+
+<style>
+    /* CSS for alert container and positioning */
+#messages {
+    position: fixed;
+    top: 20px;
+    right: 0;  /* No gap between the alert and the right side */
+    z-index: 1050;
+    width: 300px;  /* Fixed width for the alert box */
+    max-width: 100%;
+}
+
+/* Alert box styling */
+.alert {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s ease-in-out;
+    border-color: #c0a16b;
+    color: gray;
+    border-radius: 3px;
+    top:80px;
+}
+
+/* Animation for sliding in from the right */
+.alert-slide-in {
+    animation: slideInRight 0.5s ease-out forwards;
+}
+
+/* Slide-out animation */
+@keyframes slideInRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Progress bar style */
+.alert-progress-bar {
+    height: 4px;
+    background-color: #c0a16b;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* Optional styling for icons */
+.alertinner .wicon {
+    margin-right: 10px;
+}
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const alertDuration = 5000;  // Duration of alert in milliseconds (5 seconds)
+
+    // Get all the alerts that have the class 'alert-slide-in'
+    const alerts = document.querySelectorAll('.alert-slide-in');
+
+    alerts.forEach(function(alert) {
+        const progressBar = alert.querySelector('.alert-progress-bar');
+        let progress = 100;
+
+        // Start the progress bar animation
+        const progressInterval = setInterval(function() {
+            progress -= (100 / alertDuration) * 100; // Decrease progress by (100% / alertDuration)
+            progressBar.style.width = progress + '%';
+
+            if (progress <= 0) {
+                clearInterval(progressInterval);  // Stop the progress bar
+                alert.classList.add('fade-out');   // Trigger the fade-out animation
+                setTimeout(function() {
+                    alert.remove();  // Remove the alert after the animation
+                }, 1000);  // After 1 second (duration of the fade-out)
+            }
+        }, 100);  // Update every 100ms
+    });
+});
+</script>

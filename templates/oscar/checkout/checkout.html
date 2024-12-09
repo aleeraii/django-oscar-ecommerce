@@ -24,101 +24,137 @@
 
 <div class="container">
   <div class="shop-cart-table check-out-wrap">
-    <div class="row shipping-payment">
+   <div class="row shipping-payment">
+        <!-- Shipping Address Section (Left side) -->
         {% block shipping_address %}
-        <div class="row">
             <div class="col-sm-6">
                 <div class="sub-header">
-                     <div class="col-sm-6">&nbsp;</div>
-                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}</h4>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}
+                         <a href="{% url 'checkout:shipping-address' %}" style="color:#c8a165;font-size: small">
+                                {% trans "(Edit)" %}
+                         </a>
+                    </h4>
                 </div>
                 {% if shipping_address %}
-                    <div class="">
-                          {% block shipping_address_actions %}
-                           <a href="{% url 'checkout:shipping-address' %}" class="floatright" style="color:#c8a165">
-                                {% trans "Change" %}
-                            </a>
+                    <div>
+                        {% block shipping_address_actions %}
+<!--                            <a href="{% url 'checkout:shipping-address' %}" class="floatright" style="color:#c8a165">-->
+<!--                                {% trans "Change" %}-->
+<!--                            </a>-->
                         {% endblock %}
-                       <address>
-                               <div>
-                                   <div class="col-sm-6">
-                                    <table class="table">
-                                        <tbody>
-                                            {% for field in shipping_address.active_address_fields %}
-                                                <tr>
-                                                    <td>{{ field }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                               </div>
-                            </address>
+                    <address>
+                      <div class="col-sm-8">
+                        <table class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                <!-- Loop through the fields and display both labels and values -->
+                                <tr>
+                                    <td><strong>{% trans "First name" %}:</strong></td>
+                                    <td>{{ shipping_address.first_name }}</td>
+                                </tr>
 
-                        {% if shipping_address.phone_number %}
-                            <h4 class="title-1 title-border">{% trans "Contact" %}</h4>
-                            <p>
-                                {% trans "Phone" %}: {{ shipping_address.phone_number }}
-                                {% if guest_email %}
-                                    <br/>{% trans "Email" %}: {{ guest_email }}
+                                <tr>
+                                    <td><strong>{% trans "Last name" %}:</strong></td>
+                                    <td>{{ shipping_address.last_name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>{% trans "First line of address" %}:</strong></td>
+                                    <td>{{ shipping_address.line1 }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>{% trans "City" %}:</strong></td>
+                                    <td>{{ shipping_address.line4 }}</td>
+                                </tr>
+
+                                {% if shipping_address.state %}
+                                    <tr>
+                                        <td><strong>{% trans "State/Country" %}:</strong></td>
+                                        <td>{{ shipping_address.state }}</td>
+                                    </tr>
                                 {% endif %}
-                            </p>
-                        {% endif %}
 
-                        {% if shipping_address.notes %}
-                            <p class="title-1 title-border ">{% trans "Instructions" %}</p>
-                            <p>{{ shipping_address.notes|linebreaks }}</p>
-                        {% endif %}
+                                <tr>
+                                    <td><strong>{% trans "Post/Zip code" %}:</strong></td>
+                                    <td>{{ shipping_address.postcode }}</td>
+                                </tr>
+
+                                {% if shipping_address.phone_number %}
+                                    <tr>
+                                        <td><strong>{% trans "Phone" %}:</strong></td>
+                                        <td>{{ shipping_address.phone_number }}</td>
+                                    </tr>
+                                {% endif %}
+
+                                {% if shipping_address.notes %}
+                                    <tr>
+                                        <td><strong>{% trans "Instructions" %}:</strong></td>
+                                        <td>{{ shipping_address.notes|linebreaks }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                      </div>
+                    </address>
                     </div>
                 {% endif %}
-
-                {% if shipping_method %}
-                    <div class="col-sm-6">&nbsp;</div>
-                        <h4 class="title-1 title-border text-uppercase mb-30">
-                          {% trans "Shipping method" %}
-                         </h4>
-                          {% block shipping_method_actions %}
-                            <a href="{% url 'checkout:shipping-method' %}" class="floatright" style="color:#c8a165">
-                                {% trans "Change" %}
-                            </a>
-                          {% endblock %}
-                        <p>{{ shipping_method.name }}
-                            {% if shipping_method.description %}
-                                - {{ shipping_method.description|safe }}
-                            {% endif %}
-                        </p>
-
-                {% endif %}
             </div>
-
+           <!-- Right side: Shipping Method and Payment Method -->
+            <div class="col-sm-6">
+            <!-- Shipping Method Section -->
+            {% if shipping_method %}
+                <div>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping method" %}
+                     <a href="{% url 'checkout:shipping-method' %}" style="color:#c8a165; font-size: small">
+                            {% trans "(Edit)" %}
+                        </a>
+                    </h4>
+                    {% block shipping_method_actions %}
+<!--                        <a href="{% url 'checkout:shipping-method' %}" class="floatright" style="color:#c8a165">-->
+<!--                            {% trans "Change" %}-->
+<!--                        </a>-->
+                    {% endblock %}
+                    <p>{{ shipping_method.name }}
+                        {% if shipping_method.description %}
+                            - {{ shipping_method.description|safe }}
+                        {% endif %}
+                    </p>
+                </div></br>
+            {% endif %}
         {% endblock shipping_address %}
 
-        {# You will almost certainly want to override this block to provide a payment summary #}
-
-        {% block payment_method %}
-            <div class="col-sm-6">
-                <div class="sub-header">
-                     <div class="col-sm-6">&nbsp;</div>
-                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}</h4>
+            <!-- Payment Method Section -->
+            {% block payment_method %}
+                <div>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}
+                        <a href="{% url 'checkout:payment-details' %}" style="color:#c8a165; font-size: small">
+                        {% trans "(Edit)" %}
+                    </a>
+                    </h4>
+<!--                    <a href="{% url 'checkout:payment-details' %}" class="floatright" style="color:#c8a165">-->
+<!--                        {% trans "Change" %}-->
+<!--                    </a>-->
+                    <p>{% trans "Payment details to go here" %}</p>
                 </div>
-                  <a href="{% url 'checkout:payment-details' %}" class="floatright" style="color:#c8a165">
-                    {% trans "Change" %}
-                  </a>
-                <p>{% trans "Payment details to go here" %}</p>
-            </div>
+            {% endblock payment_method %}
         </div>
-        {% endblock payment_method %}
     </div>
 
     {% block order_contents %}
         <div class="sub-header">
             <div class="">
             {% block order_contents_actions %}
-                <a href="{% url 'basket:summary' %}" class="floatright" style="color:#c8a165">
-                    {% trans "Edit order contents" %}
-                </a>
+<!--                <a href="{% url 'basket:summary' %}" class="floatright" style="color:#c8a165">-->
+<!--                    {% trans "Edit order contents" %}-->
+<!--                </a>-->
                  <div class="col-sm-6">&nbsp;</div>
-                 <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Order contents" %} </h4>
+                 <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Order contents" %}
+                   <a href="{% url 'basket:summary' %}" style="color:#c8a165; font-size: small">
+                    {% trans "(Edit)" %}
+                </a>
+                 </h4>
             {% endblock %}
             </div>
 
@@ -146,7 +182,7 @@
                                                     {% with image=line.product.primary_image %}
                                                         {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
         <!--                                                <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" />-->
-                                                        <img src="{% static 'oscar/img/cart/1.jpg' %}" alt="{{ line.product.get_title }}" />
+                                                        <img src="{{thumb.url}}" alt="{{ line.product.get_title }}" />
                                                     {% endwith %}
                                                 </a>
                                             </div>
