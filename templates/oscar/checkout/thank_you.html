@@ -18,8 +18,8 @@
 {% block content %}
     <div class="container">
          <div class="col-sm-6">&nbsp;</div>
-        <div class="thank-recieve bg-white mb-30">
-            <p>Thank you. Your order has been received.</p>
+        <div class="thank-recieve mb-30" style="background:#c0a16b">
+            <p class="text-white">Thank you. Your order has been received.</p>
         </div>
 
          <div class="order-info bg-white text-center clearfix mb-30">
@@ -46,105 +46,114 @@
         </div>
 
       <div class="shop-cart-table check-out-wrap">
-        <div class="">
+       <div class="row">
             {% block shipping_info %}
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="sub-header">
-                         <div class="col-sm-6">&nbsp;</div>
-                        <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}</h4>
-                    </div>
-                    {% if order.shipping_address %}
-                        <div class="">
-                              {% block shipping_address_actions %}
-                            {% endblock %}
-                           <address>
-                               <div>
-                                   <div class="col-sm-6">
-                                    <table class="table">
-                                    <table class="table">
-                                        <tbody>
-                                            {% for field in order.shipping_address.active_address_fields %}
-                                                <tr>
-                                                    <td>{{ field }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                               </div>
-                            </address>
-
-                            {% if order.shipping_address.phone_number %}
-                                <h4 class="title-1 title-border">{% trans "Contact" %}</h4>
-                                <p>
-                                    {% trans "Phone" %}: {{ order.shipping_address.phone_number }}
-                                    {% if order.guest_email %}
-                                        <br/>{% trans "Email" %}: {{ order.guest_email }}
-                                    {% endif %}
-                                </p>
-                            {% endif %}
-
-                            {% if order.shipping_address.notes %}
-                                <p class="title-1 title-border ">{% trans "Instructions" %}</p>
-                                <p>{{ order.shipping_address.notes|linebreaks }}</p>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-
-                    {% if order.shipping_method %}
-                        <div class="col-sm-6">&nbsp;</div>
-                            <h4 class="title-1 title-border text-uppercase mb-30">
-                              {% trans "Shipping method" %}
-                             </h4>
-                              {% block shipping_method_actions %}
-                              {% endblock %}
-                            <p>{{ order.shipping_method }}
-                                {% if order.shipping_method.description %}
-                                    - {{ order.shipping_method.description|safe }}
-                                {% endif %}
-                            </p>
-
-                    {% endif %}
+            <div class="col-sm-6">
+                <!-- Shipping Address Section (Left side) -->
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}</h4>
                 </div>
 
+                {% if order.shipping_address %}
+                <div>
+                    {% block shipping_address_actions %}
+                    {% endblock %}
+                    <address>
+                        <div class="col-sm-8">
+                        <table class="table">
+                            <tbody>
+                                <!-- Loop through address fields and display labels and values -->
+                                <tr>
+                                    <td><strong>{% trans "First name" %}:</strong></td>
+                                    <td>{{ order.shipping_address.first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Last name" %}:</strong></td>
+                                    <td>{{ order.shipping_address.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "First line of address" %}:</strong></td>
+                                    <td>{{ order.shipping_address.line1 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "City" %}:</strong></td>
+                                    <td>{{ order.shipping_address.line4 }}</td>
+                                </tr>
+                                {% if order.shipping_address.state %}
+                                <tr>
+                                    <td><strong>{% trans "State/Country" %}:</strong></td>
+                                    <td>{{ order.shipping_address.state }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td><strong>{% trans "Post/Zip code" %}:</strong></td>
+                                    <td>{{ order.shipping_address.postcode }}</td>
+                                </tr>
+                                {% if order.shipping_address.phone_number %}
+                                <tr>
+                                    <td><strong>{% trans "Phone" %}:</strong></td>
+                                    <td>{{ order.shipping_address.phone_number }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if order.shipping_address.notes %}
+                                <tr>
+                                    <td><strong>{% trans "Instructions" %}:</strong></td>
+                                    <td>{{ order.shipping_address.notes|linebreaks }}</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        </div>
+                    </address>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Shipping Method Section (Right side) -->
+            <div class="col-sm-6">
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping method" %}</h4>
+                </div>
+                {% if order.shipping_method %}
+                <p>{{ order.shipping_method }}
+                    {% if order.shipping_method.description %}
+                    - {{ order.shipping_method.description|safe }}
+                    {% endif %}
+                </p>
+                {% endif %}
             {% endblock shipping_info %}
 
             {# You will almost certainly want to override this block to provide a payment summary #}
-
             {% block payment_info %}
-                <div class="col-sm-6">
-                    <div class="sub-header">
-                         <div class="col-sm-6">&nbsp;</div>
-                        <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}</h4>
-                    </div>
-                     {% for source in order.sources.all %}
-                            <p>
-                            {% if source.reference %}
-                                {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name reference=source.reference %}
-                                    Allocation of {{ amount }} from type {{ type }} (reference: {{ reference }})
-                                {% endblocktrans %}
-                            {% else %}
-                                {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name %}
-                                    Allocation of {{ amount }} from type {{ type }}
-                                {% endblocktrans %}
-                            {% endif %}
-                            </p>
-                        {% empty %}
-                            <p>
-                            {% trans "No payment was required for this order." %}
-                            </p>
-                        {% endfor %}
-
-                        {% if order.billing_address %}
-                            <h4>{% trans "Billing address" %}</h4>
-                            <address>
-                                {% for field in order.billing_address.active_address_fields %}
-                                    {{ field }}<br/>
-                                {% endfor %}
-                            </address>
-                        {% endif %}
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}</h4>
                 </div>
+                {% for source in order.sources.all %}
+                <p>
+                    {% if source.reference %}
+                    {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name reference=source.reference %}
+                    Allocation of {{ amount }} from type {{ type }} (reference: {{ reference }})
+                    {% endblocktrans %}
+                    {% else %}
+                    {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name %}
+                    Allocation of {{ amount }} from type {{ type }}
+                    {% endblocktrans %}
+                    {% endif %}
+                </p>
+                {% empty %}
+                <p>
+                    {% trans "No payment was required for this order." %}
+                </p>
+                {% endfor %}
+
+                {% if order.billing_address %}
+                <h4>{% trans "Billing Address" %}</h4>
+                <address>
+                    {% for field in order.billing_address.active_address_fields %}
+                    {{ field }}<br/>
+                    {% endfor %}
+                </address>
+                {% endif %}
             </div>
             {% endblock payment_info %}
         </div>
@@ -181,8 +190,7 @@
                                                     <a href="{{ line.product.get_absolute_url }}">
                                                         {% with image=line.product.primary_image %}
                                                             {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
-            <!--                                                <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" />-->
-                                                            <img src="{% static 'oscar/img/cart/1.jpg' %}" alt="{{ line.product.get_title }}" />
+                                                            <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" />
                                                         {% endwith %}
                                                     </a>
                                                 </div>

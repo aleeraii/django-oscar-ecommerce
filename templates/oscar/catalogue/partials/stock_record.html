@@ -17,16 +17,14 @@
 {% endif %}
 {% if session.price.exists %}
 <p class="{{ session.availability.code }} availability">
-    {% if session.availability.is_available_to_buy %}
-        <i class="fas fa-check-circle"></i>
-    {% else %}
-        <i class="fas fa-ban"></i>
+    {% if not session.availability.is_available_to_buy %}
+        <i class="fas fa-ban"></i>  {% trans 'Out of stock' %}
     {% endif %}
-    {% if verbose %}
-        {{ session.availability.message }}
-    {% else %}
-        {{ session.availability.short_message }}
-    {% endif %}
+<!--    {% if verbose %}-->
+<!--        {{ session.availability.message }}-->
+<!--    {% else %}-->
+<!--        {{ session.availability.short_message }}-->
+<!--    {% endif %}-->
 </p>
 {% else %}
     <i class="fas fa-ban"></i>

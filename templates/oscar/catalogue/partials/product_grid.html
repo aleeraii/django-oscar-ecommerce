@@ -9,9 +9,14 @@
 <div class="col-lg-4 col-md-6">
     <div class="single-product">
         <div class="product-img">
-            <span class="pro-label new-label"> {% include "oscar/catalogue/partials/stock_record.html" %}</span>
-            <span class="pro-price-2"> </span>
-            <a href="{{ product.get_absolute_url }}"><img src="{% static 'oscar/img/product/image.png' %}" alt="" /></a>
+<!--            <span class="pro-label new-label">new</span>-->
+            <span class="pro-price-2"> {% include "oscar/catalogue/partials/stock_record.html" %} </span>
+           {% with image=product.primary_image %}
+                {% oscar_thumbnail image.original "270x270" upscale=False as thumb %}
+                <a href="{{ product.get_absolute_url }}">
+                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                </a>
+            {% endwith %}
         </div>
         <div class="product-info clearfix text-center">
             <div class="fix">
@@ -46,10 +51,10 @@
             <div class="product-action clearfix">
                 <!-- Include the Wishlist functionality -->
                 {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
-                <a href="#" data-bs-toggle="modal"  data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>
-                <a href="#" data-bs-toggle="tooltip" data-placement="top" title="Compare"><i class="zmdi zmdi-refresh"></i></a>
+<!--              <a href="#" data-bs-toggle="modal"  data-bs-target="#productModal" title="Quick View"><i class="zmdi zmdi-zoom-in"></i></a>-->
                 <!-- Include the Add to Cart functionality -->
-                {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %} </div>
+                {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %}
+            </div>
         </div>
     </div>
 </div>

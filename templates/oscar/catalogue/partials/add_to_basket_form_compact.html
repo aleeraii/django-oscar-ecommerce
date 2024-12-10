@@ -15,5 +15,54 @@
         </a>
     </form>
 {% else %}
-    <span class="btn btn-secondary btn-block disabled">{% trans "Unavailable" %}</span>
+<span>
+       <a href="#" title="{% trans 'This product is out of stock.' %}" onclick="showAlert(); return false;">
+        <i class="zmdi zmdi-shopping-cart-plus"></i>
+    </a>
+</span>
+
 {% endif %}
+
+
+<script>
+function showAlert() {
+    // Create a new alert div
+    var alertDiv = document.createElement('div');
+    alertDiv.classList.add('alert', 'alert-danger', 'fade', 'show', 'alert-slide-in');
+
+    // Add message content with the "Unavailable" text and icon
+    var alertContent = document.createElement('div');
+    alertContent.classList.add('alertinner');
+    alertContent.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + '{% trans "Unavailable" %}';
+
+    // Add progress bar
+    var progressBar = document.createElement('div');
+    progressBar.classList.add('progress-bar');
+    progressBar.style.height = '4px';
+    progressBar.style.backgroundColor = '#c0a16b';
+    progressBar.style.position = 'absolute';
+    progressBar.style.bottom = '0';
+    progressBar.style.left = '0';
+    progressBar.style.width = '100%';  // Initially set to 100%
+
+    // Append progress bar and content to the alert div
+    alertDiv.appendChild(alertContent);
+    alertDiv.appendChild(progressBar);
+
+    // Append the alert to the #messages container
+    document.getElementById('messages').appendChild(alertDiv);
+
+    // Gradually decrease the progress bar width to 0% over 5 seconds
+    var width = 100;
+    var progressInterval = setInterval(function() {
+        if (width <= 0) {
+            clearInterval(progressInterval); // Stop the interval once the width reaches 0
+            alertDiv.remove(); // Remove the alert
+        } else {
+            width--; // Decrease width
+            progressBar.style.width = width + '%'; // Update the progress bar width
+        }
+    }, 50); // Update the width every 50 milliseconds
+}
+</script>
+

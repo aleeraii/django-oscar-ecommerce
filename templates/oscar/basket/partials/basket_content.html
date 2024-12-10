@@ -5,25 +5,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% if basket_warnings %}
-    <h5>{% trans "Important messages about items in your basket" %}</h5>
-    {% for warning in basket_warnings %}
-        <div class="alert alert-warning">{{ warning }}</div>
-    {% endfor %}
-{% endif %}
 
-{% if upsell_messages %}
-    <div class="card card-body">
-        <h3>{% trans "You could be missing out on offers!" %}</h3>
-        {% for upsell in upsell_messages %}
-            {% blocktrans with message=upsell.message url=upsell.offer.get_absolute_url offer_name=upsell.offer.name %}
-                <div class="warning">{{ message }} to qualify for the <a href="{{ url }}">{{ offer_name }}</a> special offer</div>
-            {% endblocktrans %}
-        {% endfor %}
-    </div>
-{% endif %}
-
-{% if not basket.is_empty %}
 <!-- SHOPPING-CART-AREA START -->
 <div class="shopping-cart-area  pt-80 pb-80">
     <div class="container">
@@ -33,101 +15,139 @@
                     <!-- Nav tabs -->
                     <ul class="cart-page-menu nav row clearfix mb-30">
                         <li><a class="active" href="#shopping-cart" data-bs-toggle="tab">shopping cart</a></li>
-                        <li><a href="#wishlist" data-bs-toggle="tab">wishlist</a></li>
+<!--                        <li><a href="#wishlist" data-bs-toggle="tab">wishlist</a></li>-->
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <!-- shopping-cart start -->
                         <div class="tab-pane active" id="shopping-cart">
-                        {% block basket_form_main %}
-                            <form method="post" class="basket_summary" id="basket_formset">
-                                {% csrf_token %}
-                                {{ formset.management_form }}
+                      {% block basket_form_main %}
 
-                                <div class="shop-cart-table">
-                                    <div class="table-content table-responsive">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th class="product-thumbnail">Product</th>
-                                                    <th class="product-price">Price</th>
-                                                    <th class="product-quantity">Quantity</th>
-                                                    <th class="product-subtotal">Total</th>
-                                                    <th class="product-remove">Remove</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for form in formset %}
-                                                    {% with line=form.instance product=form.instance.product %}
-                                                        <tr>
-                                                            <!-- Product Thumbnail -->
-                                                            <td class="product-thumbnail text-left">
-                                                                <div class="single-product">
-                                                                    <div class="product-img">
-                                                                        <a href="{{ product.get_absolute_url }}"><img src="{% static 'oscar/img/product/2.jpg' %}" alt="{{ product.get_title }}" /></a>
-                                                                    </div>
-                                                                    <div class="product-info">
-                                                                        <h4 class="post-title"><a class="text-light-black" href="{{ product.get_absolute_url }}">{{ product.get_title }}</a></h4>
-                                                                        <p class="mb-0">Color :  Black</p>
-                                                                        <p class="mb-0">Size :     SL</p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
+                        {% if basket_warnings %}
+                            <h6 style="color:gray">{% trans "Important messages about items in your basket" %}</h6>
+                            {% for warning in basket_warnings %}
+                                <div class="alert alert-warning">{{ warning }}</div>
+                            {% endfor %}
+                        {% endif %}
 
-                                                            <!-- Product Price -->
-                                                            <td class="product-price">
-                                                                {% if not line.unit_price_incl_tax and not line.unit_tax_excl_tax %}
-                                                                    <p>&mdash;</p>
-                                                                {% else %}
-                                                                    <p class="price_color text-right">
-                                                                        {% if line.is_tax_known %}
-                                                                            {{ line.unit_price_incl_tax|currency:line.price_currency }}
+                        {% if upsell_messages %}
+                        <div class="shop-cart-table">
+                            <h6 style="color:gray">{% trans "You could be missing out on offers!" %}</h6>
+                            {% for upsell in upsell_messages %}
+                                {% blocktrans with message=upsell.message url=upsell.offer.get_absolute_url offer_name=upsell.offer.name %}
+                                    <div class="warning">{{ message }} to qualify for the <a href="{{ url }}">{{ offer_name }}</a> special offer</div>
+                                {% endblocktrans %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <form method="post" class="basket_summary" id="basket_formset">
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            <div class="shop-cart-table">
+                                <div class="table-content table-responsive">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="product-thumbnail">Product</th>
+                                                <th class="product-price">Price</th>
+                                                <th class="product-quantity">Quantity</th>
+                                                <th class="product-subtotal">Total</th>
+                                                <th class="product-remove">Remove</th>
+                                            </tr>
+                                        </thead>
+                                        {% if not basket.is_empty %}
+
+                                        {% for form in formset %}
+                                            {% with line=form.instance product=form.instance.product %}
+                                                {% purchase_info_for_line request line as session %}
+                                                    <tbody>
+                                                        <div class="basket-items">
+                                                            <div class="row">
+                                                                <tr>
+                                                                    <td class="product-thumbnail text-left">
+                                                                            <div class="single-product">
+                                                                                <div class="product-img">
+                                                                                    {{ form.id }}
+                                                                                    {% with image=product.primary_image %}
+                                                                                        {% oscar_thumbnail image.original "90x90" upscale=False as thumb %}
+                                                                                            <a href="{{ product.get_absolute_url }}">
+                                                                                                <img src="{{ thumb.url }}" alt="{{ product.get_title }}"/>
+                                                                                            </a>
+                                                                                        {% endwith %}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        <div class="product-info">
+                                                                            <h4 class="post-title"><a class="text-light-black" href="#">{{ line.description }}</a></h4>
+                                                                            <p class="mb-0">{{ session.availability.message }}</p>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td class="product-price">
+                                                                        {% if not line.unit_price_incl_tax and not line.unit_tax_excl_tax %}
+                                                                            <p class="text-right">&mdash;</p>
                                                                         {% else %}
-                                                                            {{ line.unit_price_excl_tax|currency:line.price_currency }}
+                                                                            <p class="price_color text-right">
+                                                                                <span class="price-title d-md-none">{% trans "Price" %}:</span>
+                                                                                {% if line.is_tax_known %}
+                                                                                    {{ line.unit_price_incl_tax|currency:line.price_currency }}
+                                                                                {% else %}
+                                                                                    {{ line.unit_price_excl_tax|currency:line.price_currency }}
+                                                                                {% endif %}
+                                                                            </p>
                                                                         {% endif %}
-                                                                    </p>
-                                                                {% endif %}
-                                                            </td>
+                                                                    </td>
 
-                                                            <!-- Product Quantity -->
-                                                            <td class="product-quantity">
-                                                                <div class="cart-plus-minus">
-                                                                    <input type="text" value="{{ form.quantity.value }}" name="qtybutton" class="cart-plus-minus-box">
-                                                                </div>
-                                                            </td>
+                                                                     <td>
+                                                                        <div class="input-group {% if form.errors %}error{% endif %}">
+                                                                            {% render_field form.quantity class="form-control" %}
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-secondary" type="submit" data-loading-text="{% trans 'Updating...' %}">{% trans "Update" %}</button>
+                                                                            </div>
+                                                                        </div>
+                                                                  </td>
 
-                                                            <!-- Product Subtotal -->
-                                                            <td class="product-subtotal">
-                                                                {% if not line.line_price_incl_tax and not line.line_price_excl_tax %}
-                                                                    <p>&mdash;</p>
-                                                                {% else %}
-                                                                    <p class="price_color text-right">
-                                                                        {% if line.is_tax_known %}
-                                                                            {{ line.line_price_incl_tax|currency:line.price_currency }}
-                                                                        {% else %}
-                                                                            {{ line.line_price_excl_tax|currency:line.price_currency }}
-                                                                        {% endif %}
-                                                                    </p>
-                                                                {% endif %}
-                                                            </td>
+                                                                    <td class="product-subtotal">
+                                                                            {% if not line.line_price_incl_tax and not line_price_excl_tax %}
+                                                                                <p class="text-right">&mdash;</p>
+                                                                            {% else %}
+                                                                                <p class="price_color text-right">
+                                                                                    <span class="price-title d-md-none">{% trans "Total" %}:</span>
+                                                                                    {% if line.is_tax_known %}
+                                                                                        {{ line.line_price_incl_tax|currency:line.price_currency }}
+                                                                                    {% else %}
+                                                                                        {{ line.line_price_excl_tax|currency:line.price_currency }}
+                                                                                    {% endif %}
+                                                                                </p>
+                                                                            {% endif %}
+                                                                    </td>
 
-                                                            <!-- Remove Action -->
-                                                            <td class="product-remove">
-                                                                <a href="#" data-id="{{ forloop.counter0 }}" data-behaviours="remove">
-                                                                    <i class="zmdi zmdi-close"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    {% endwith %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                                  <td class="product-remove">
+                                                                        <a href="#" data-id="{{ forloop.counter0 }}" data-behaviours="remove">
+                                                                            <i class="zmdi zmdi-close"></i>
+                                                                        </a>
+                                                                        <!-- Add the delete input here -->
+                                                                        <input type="checkbox" id="id_form-{{ forloop.counter0 }}-DELETE" name="form-{{ forloop.counter0 }}-DELETE" value="on" style="display:none">
+                                                                    </td>
+                                                                </tr>
+                                                            </div>
+                                                        </div>
+                                                    </tbody>
+                                                {% endwith %}
+                                            {% endfor %}
+                                    {% else %}
+                                            <p class="text-center">
+                                                {% trans "Your basket is empty." %}
+                                            </p>
+                                    {% endif %}
+                                    </table>
                                 </div>
-                            </form>
-                        {% endblock %}
-
+                            </div>
+                        </form>
+                    {% endblock %}
+                        {% if not basket.is_empty %}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="customer-login mt-30">
@@ -150,122 +170,124 @@
                                 </div>
                                 {% endblock baskettotals %}
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="customer-login mt-30">
-                                        <h4 class="title-1 title-border text-uppercase">culculate shipping</h4>
-                                        <p class="text-gray">Enter your coupon code if you have one!</p>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <input type="text" placeholder="Country">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <input type="text" placeholder="Region / State">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <input type="text" placeholder="Post code">
-                                            </div>
-                                        </div>
-                                        <button type="submit" data-text="get a quote" class="button-one submit-button mt-15">get a quote</button>
-                                    </div>
-                                </div>
-                            </div>
+                         {% endif %}
+
+<!--                            <div class="row">-->
+<!--                                <div class="col-md-12">-->
+<!--                                    <div class="customer-login mt-30">-->
+<!--                                        <h4 class="title-1 title-border text-uppercase">culculate shipping</h4>-->
+<!--                                        <p class="text-gray">Enter your coupon code if you have one!</p>-->
+<!--                                        <div class="row">-->
+<!--                                            <div class="col-md-4">-->
+<!--                                                <input type="text" placeholder="Country">-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-4">-->
+<!--                                                <input type="text" placeholder="Region / State">-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-4">-->
+<!--                                                <input type="text" placeholder="Post code">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <button type="submit" data-text="get a quote" class="button-one submit-button mt-15">get a quote</button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </div>
                         <!-- shopping-cart end -->
                         <!-- wishlist start -->
-                        <div class="tab-pane" id="wishlist">
-                            <form action="#">
-                                <div class="shop-cart-table">
-                                    <div class="table-content table-responsive">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th class="product-thumbnail">Product</th>
-                                                    <th class="product-price">Price</th>
-                                                    <th class="product-stock">stock status</th>
-                                                    <th class="product-add-cart">Add to cart</th>
-                                                    <th class="product-remove">Remove</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="product-thumbnail  text-left">
-                                                        <!-- Single-product start -->
-                                                        <div class="single-product">
-                                                            <div class="product-img">
-                                                                <a href="single-product.html"><img src="img/product/2.jpg" alt="" /></a>
-                                                            </div>
-                                                            <div class="product-info">
-                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>
-                                                                <p class="mb-0">Color :  Black</p>
-                                                                <p class="mb-0">Size : SL</p>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Single-product end -->
-                                                    </td>
-                                                    <td class="product-price">$56.00</td>
-                                                    <td class="product-stock">in stock</td>
-                                                    <td class="product-add-cart">
-                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
-                                                    </td>
-                                                    <td class="product-remove">
-                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="product-thumbnail  text-left">
-                                                        <!-- Single-product start -->
-                                                        <div class="single-product">
-                                                            <div class="product-img">
-                                                                <a href="single-product.html"><img src="img/product/12.jpg" alt="" /></a>
-                                                            </div>
-                                                            <div class="product-info">
-                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>
-                                                                <p class="mb-0">Color :  Black</p>
-                                                                <p class="mb-0">Size :     SL</p>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Single-product end -->
-                                                    </td>
-                                                    <td class="product-price">$56.00</td>
-                                                    <td class="product-stock">in stock</td>
-                                                    <td class="product-add-cart">
-                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
-                                                    </td>
-                                                    <td class="product-remove">
-                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="product-thumbnail  text-left">
-                                                        <!-- Single-product start -->
-                                                        <div class="single-product">
-                                                            <div class="product-img">
-                                                                <a href="single-product.html"><img src="img/product/6.jpg" alt="" /></a>
-                                                            </div>
-                                                            <div class="product-info">
-                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>
-                                                                <p class="mb-0">Color :  Black</p>
-                                                                <p class="mb-0">Size :     SL</p>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Single-product end -->
-                                                    </td>
-                                                    <td class="product-price">$56.00</td>
-                                                    <td class="product-stock">in stock</td>
-                                                    <td class="product-add-cart">
-                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>
-                                                    </td>
-                                                    <td class="product-remove">
-                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+<!--                        <div class="tab-pane" id="wishlist">-->
+<!--                            <form action="#">-->
+<!--                                <div class="shop-cart-table">-->
+<!--                                    <div class="table-content table-responsive">-->
+<!--                                        <table>-->
+<!--                                            <thead>-->
+<!--                                                <tr>-->
+<!--                                                    <th class="product-thumbnail">Product</th>-->
+<!--                                                    <th class="product-price">Price</th>-->
+<!--                                                    <th class="product-stock">stock status</th>-->
+<!--                                                    <th class="product-add-cart">Add to cart</th>-->
+<!--                                                    <th class="product-remove">Remove</th>-->
+<!--                                                </tr>-->
+<!--                                            </thead>-->
+<!--                                            <tbody>-->
+<!--                                                <tr>-->
+<!--                                                    <td class="product-thumbnail  text-left">-->
+<!--                                                        &lt;!&ndash; Single-product start &ndash;&gt;-->
+<!--                                                        <div class="single-product">-->
+<!--                                                            <div class="product-img">-->
+<!--                                                                <a href="single-product.html"><img src="img/product/2.jpg" alt="" /></a>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="product-info">-->
+<!--                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>-->
+<!--                                                                <p class="mb-0">Color :  Black</p>-->
+<!--                                                                <p class="mb-0">Size : SL</p>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                        &lt;!&ndash; Single-product end &ndash;&gt;-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-price">$56.00</td>-->
+<!--                                                    <td class="product-stock">in stock</td>-->
+<!--                                                    <td class="product-add-cart">-->
+<!--                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-remove">-->
+<!--                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td class="product-thumbnail  text-left">-->
+<!--                                                        &lt;!&ndash; Single-product start &ndash;&gt;-->
+<!--                                                        <div class="single-product">-->
+<!--                                                            <div class="product-img">-->
+<!--                                                                <a href="single-product.html"><img src="img/product/12.jpg" alt="" /></a>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="product-info">-->
+<!--                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>-->
+<!--                                                                <p class="mb-0">Color :  Black</p>-->
+<!--                                                                <p class="mb-0">Size :     SL</p>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                        &lt;!&ndash; Single-product end &ndash;&gt;-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-price">$56.00</td>-->
+<!--                                                    <td class="product-stock">in stock</td>-->
+<!--                                                    <td class="product-add-cart">-->
+<!--                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-remove">-->
+<!--                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                                <tr>-->
+<!--                                                    <td class="product-thumbnail  text-left">-->
+<!--                                                        &lt;!&ndash; Single-product start &ndash;&gt;-->
+<!--                                                        <div class="single-product">-->
+<!--                                                            <div class="product-img">-->
+<!--                                                                <a href="single-product.html"><img src="img/product/6.jpg" alt="" /></a>-->
+<!--                                                            </div>-->
+<!--                                                            <div class="product-info">-->
+<!--                                                                <h4 class="post-title"><a class="text-light-black" href="#">dummy product name</a></h4>-->
+<!--                                                                <p class="mb-0">Color :  Black</p>-->
+<!--                                                                <p class="mb-0">Size :     SL</p>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                        &lt;!&ndash; Single-product end &ndash;&gt;-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-price">$56.00</td>-->
+<!--                                                    <td class="product-stock">in stock</td>-->
+<!--                                                    <td class="product-add-cart">-->
+<!--                                                        <a class="text-light-black" href="#"><i class="zmdi zmdi-shopping-cart-plus"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="product-remove">-->
+<!--                                                        <a href="#"><i class="zmdi zmdi-close"></i></a>-->
+<!--                                                    </td>-->
+<!--                                                </tr>-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </form>-->
+<!--                        </div>-->
                         <!-- wishlist end -->
                     </div>
 
@@ -276,14 +298,7 @@
 </div>
 <!-- SHOPPING-CART-AREA END -->
 
-{% else %}
-    {% block emptybasket %}
-        <p>
-            {% trans "Your basket is empty." %}
-            <a href="{{ homepage_url }}">{% trans "Continue shopping" %}</a>
-        </p>
-    {% endblock %}
-{% endif %}
+
 
 {% block savedbasket %}
 <!--    {% if user.is_authenticated and saved_formset %}-->
@@ -340,4 +355,5 @@
 <!--            </form>-->
 <!--        </div>-->
 <!--    {% endif %}-->
+
 {% endblock %}
