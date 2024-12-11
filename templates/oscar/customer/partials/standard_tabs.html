@@ -1,26 +1,50 @@
 {% load i18n %}
 {% load display_tags %}
-
-<li class="nav-item">
-    <a href="{% url 'customer:profile-view' %}" class="nav-link{% if active_tab == 'profile' %} active{% endif %}">{% trans "Profile" %}</a>
-</li>
-<li class="nav-item">
-    <a href="{% url 'customer:order-list' %}" class="nav-link{% if active_tab == 'orders' %} active{% endif %}">{% trans "Order History" %}</a>
-</li>
-<li class="nav-item">
-    <a href="{% url 'customer:address-list' %}" class="nav-link{% if active_tab == 'addresses' %} active{% endif %}">{% trans "Address Book" %}</a>
-</li>
-<li class="nav-item">
-    <a href="{% url 'customer:email-list' %}" class="nav-link{% if active_tab == 'emails' %} active{% endif %}">{% trans "Email History" %}</a>
-</li>
-<li class="nav-item">
-    <a href="{% url 'customer:alerts-list' %}" class="nav-link{% if active_tab == 'alerts' %} active{% endif %}">{% trans "Product Alerts" %}</a>
-</li>
-<li class="nav-item">
-    <a href="{% url 'customer:notifications-inbox' %}" class="nav-link{% if active_tab == 'notifications' %} active{% endif %}">{% trans "Notifications" %}</a>
-</li>
-{% iffeature 'wishlists' %}
-    <li class="nav-item">
-        <a href="{% url 'customer:wishlists-list' %}" class="nav-link{% if active_tab == 'wishlists' %} active{% endif %}">{% trans "Wish Lists" %}</a>
+<aside class="widget widget-categories mb-30" style="padding:5%;margin-top: 1%">
+    <div class="widget-title">
+        <h4>{% trans "Account" %}</h4>
+    </div>
+    <div style="background:white">
+    <li class="mt-2">
+        <a href="{% url 'customer:profile-view' %}" class="nav-link{% if active_tab == 'profile' %} active{% endif %}">{% trans "Profile" %}</a>
     </li>
+    <li class="mt-2">
+        <a href="{% url 'customer:order-list' %}" class="nav-link{% if active_tab == 'orders' %} active{% endif %}">{% trans "Order History" %}</a>
+    </li>
+    <li class="mt-2">
+        <a href="{% url 'customer:address-list' %}" class="nav-link{% if active_tab == 'addresses' %} active{% endif %}">{% trans "Address Book" %}</a>
+    </li>
+    <li class="mt-2">
+        <a href="{% url 'customer:email-list' %}" class="nav-link{% if active_tab == 'emails' %} active{% endif %}">{% trans "Email History" %}</a>
+    </li>
+    <li class="mt-2">
+        <a href="{% url 'customer:alerts-list' %}" class="nav-link{% if active_tab == 'alerts' %} active{% endif %}">{% trans "Product Alerts" %}</a>
+    </li>
+    <li class="mt-2">
+        <a href="{% url 'customer:notifications-inbox' %}" class="nav-link{% if active_tab == 'notifications' %} active{% endif %}">{% trans "Notifications" %}</a>
+    </li>
+    {% iffeature 'wishlists' %}
+        <li class="mt-2">
+            <a href="{% url 'customer:wishlists-list' %}" class="nav-link{% if active_tab == 'wishlists' %} active{% endif %}">{% trans "Wish Lists" %}</a>
+        </li>
+    </div>
+</aside>
+
 {% endiffeature %}
+
+<style>
+.widget-categories .nav-link {
+    color: gray;
+    background-color: transparent;
+    padding: 5px;
+    display: block;
+    text-decoration: none;
+}
+
+/* Active link styles */
+.widget-categories .nav-link.active {
+    color: white;  /* Text color for active link */
+    background-color: #c0a16b;  /* Background color for active link */
+}
+
+</style>

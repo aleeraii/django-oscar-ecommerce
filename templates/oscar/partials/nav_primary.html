@@ -20,13 +20,13 @@
                         </div>
                     </div>
 
-                    <!-- Cart section -->
-                    <div class="col-md-4 col-5">
+                    <!-- Cart section-->
+                    <div class="col-md-3 col-3">
                         <div class="mini-cart text-end">
                             <ul>
                                 <li>
                                     <a class="cart-icon" href="{% url 'basket:summary' %}">
-                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                        <i style="font-size: 26px" class="zmdi zmdi-shopping-cart"></i>
                                         <span>{% if not request.basket.is_empty %}{{ request.basket.num_items }}{% else %}0{% endif %}</span>
                                     </a>
                                     <div class="mini-cart-brief text-left">
@@ -70,6 +70,12 @@
                             </ul>
                         </div>
                     </div>
+
+                     <div class="col-md-1 col-1">
+                         <a class="cart-icon" href="{% url 'customer:summary' %}">
+                             <i style="font-size: 30px" class="zmdi zmdi-account"></i>
+                         </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,7 +102,7 @@
                                         <div class="widget-title">
                                             <h4>Categories</h4>
                                         </div>
-                                        <div>
+                                        <div style="margin-left: 20%">
                                             <ul>
                                                 {% category_tree as tree_categories %}
                                                 {% if tree_categories %}
@@ -138,8 +144,11 @@
                                 <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
                                 <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
                                 <li><a href="{% url 'customer:order-list' %}">Order</a></li>
-                                <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                {% if user.is_authenticated %}
                                 <li><a href="{% url 'customer:logout' %}">logout</a></li>
+                                {% else %}
+                                <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'customer:summary' %}">My Account</a></li>
                             </ul>
                             <li><a href="#">about us</a></li>
@@ -168,8 +177,11 @@
                                         <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
                                         <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
                                         <li><a href="{% url 'customer:order-list' %}">Order</a></li>
-                                        <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                        {% if user.is_authenticated %}
                                         <li><a href="{% url 'customer:logout' %}">logout</a></li>
+                                        {% else %}
+                                        <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                        {% endif %}
                                         <li><a href="{% url 'customer:summary' %}">My Account</a></li>
                                     </ul>
                                 </li>

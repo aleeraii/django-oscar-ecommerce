@@ -2,132 +2,140 @@
 {% load currency_filters %}
 
 <div id="basket_totals">
-    <table class="table table-sm">
-        <th>Product</th>
-        <th>Total</th>
-        {% with discounts=order.basket_discounts %}
-            {% block discount_totals %}
-                {% if discounts %}
-                    <tr>
-                        <td>{% trans "Basket total (before discounts)" %}</td>
-                        <td class="text-right">{{ order.basket_total_before_discounts_incl_tax|currency:order.currency }}</td>
-                    </tr>
-                    {% for discount in discounts %}
-                        <tr>
-                            <td><span class="">{% trans "Discount" %}</span> {{ discount.offer }}</td>
-                            <td class="text-right">- {{ discount.amount|currency:order.currency }}</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            {% endblock discount_totals %}
-
-            {% block basket_total %}
-                {% if discounts %}
-                    <tr>
-                        <td class="total">{% trans "Basket total (after discounts)" %}</td>
-                        <td class="total text-right">{{ order.basket_total_incl_tax|currency:order.currency }}</td>
-                    </tr>
-                {% else %}
-                    <tr class="basket-items">
-                        <td class="total">{% trans "Basket total" %}</td>
-                        <td class="total text-right">
-                            {% if show_tax_separately %}
-                                {{ order.basket_total_excl_tax|currency:order.currency }}
-                            {% else %}
-                                {{ order.basket_total_incl_tax|currency:order.currency }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endblock basket_total %}
-        {% endwith %}
-
-        {% block shipping_total %}
-            <tr>
-                <td>{% trans "Shipping method" %}</td>
-                <td class="text-right">{{ order.shipping_method }}</td>
-            </tr>
-            {% if order.has_shipping_discounts %}
+    <!-- Wrap the table in a responsive container to make it scrollable on small screens -->
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead>
                 <tr>
-                    <td>{% trans "Shipping charge (before discounts)" %}</td>
-                    <td class="text-right">{{ order.shipping_before_discounts_incl_tax|currency:order.currency }}</td>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Total" %}</th>
                 </tr>
-                {% for discount in order.shipping_discounts %}
-                    <tr>
-                        <td><span class="badge badge-success">{% trans "Discount" %}</span> {{ discount.offer }}</td>
-                        <td class="text-right">- {{ discount.amount|currency:order.currency }}</td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <td class="total">{% trans "Shipping charge (after discounts)" %}</td>
-                    <td class="total text-right">{{ order.shipping_incl_tax|currency:order.currency }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td class="total">{% trans "Shipping charge" %}</td>
-                    <td class="total text-right">
-                        {% if show_tax_separately %}
-                            {{ order.shipping_excl_tax|currency:order.currency }}
-                        {% else %}
-                            {{ order.shipping_incl_tax|currency:order.currency }}
+            </thead>
+            <tbody>
+                {% with discounts=order.basket_discounts %}
+                    {% block discount_totals %}
+                        {% if discounts %}
+                            <tr>
+                                <td>{% trans "Basket total (before discounts)" %}</td>
+                                <td class="text-right">{{ order.basket_total_before_discounts_incl_tax|currency:order.currency }}</td>
+                            </tr>
+                            {% for discount in discounts %}
+                                <tr>
+                                    <td><span class="">{% trans "Discount" %}</span> {{ discount.offer }}</td>
+                                    <td class="text-right">- {{ discount.amount|currency:order.currency }}</td>
+                                </tr>
+                            {% endfor %}
                         {% endif %}
-                    </td>
-                </tr>
-            {% endif %}
-        {% endblock shipping_total %}
+                    {% endblock discount_totals %}
 
-        {% block surcharges %}
-            {% with surcharges=order.surcharges.all %}
-            {% if surcharges %}
-                <tr>
-                    <td colspan="2"><h3>{% trans "Surcharges" %}</h3></td>
-                </tr>
-                {% for charge in surcharges %}
-                <tr>
-                        <td class="total">{{ charge.name }}</td>
-                        <td class="total text-right">
-                            {% if show_tax_separately %}
-                                {{ charge.excl_tax|currency:order.currency }}
-                            {% else %}
-                                {{ charge.incl_tax|currency:order.currency }}
-                            {% endif %}
-                        </td>
-                </tr>
-                {% endfor %}
-            {% endif %}
-            {% endwith %}
-        {% endblock %}
+                    {% block basket_total %}
+                        {% if discounts %}
+                            <tr>
+                                <td class="total">{% trans "Basket total (after discounts)" %}</td>
+                                <td class="total text-right">{{ order.basket_total_incl_tax|currency:order.currency }}</td>
+                            </tr>
+                        {% else %}
+                            <tr class="basket-items">
+                                <td class="total">{% trans "Basket total" %}</td>
+                                <td class="total text-right">
+                                    {% if show_tax_separately %}
+                                        {{ order.basket_total_excl_tax|currency:order.currency }}
+                                    {% else %}
+                                        {{ order.basket_total_incl_tax|currency:order.currency }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endblock basket_total %}
+                {% endwith %}
 
-        {% if show_tax_separately %}
-            <tr>
-                <td class="total">{% trans "Order tax" %}</td>
-                <td class="total text-right">
-                    {{ order.total_tax|currency:order.currency }}
-                </td>
-            </tr>
-        {% endif %}
-
-        {% block post_order_action_totals %}
-            {% with actions=order.post_order_actions %}
-                {% if actions %}
+                {% block shipping_total %}
                     <tr>
-                        <td colspan="2"><h3>{% trans "Post order actions" %}</h3></td>
+                        <td>{% trans "Shipping method" %}</td>
+                        <td class="text-right">{{ order.shipping_method }}</td>
                     </tr>
-                    {% for action in order.post_order_actions %}
+                    {% if order.has_shipping_discounts %}
                         <tr>
-                            <td class="total" colspan="2"><p>{{ action.message }}</p></td>
+                            <td>{% trans "Shipping charge (before discounts)" %}</td>
+                            <td class="text-right">{{ order.shipping_before_discounts_incl_tax|currency:order.currency }}</td>
                         </tr>
-                    {% endfor %}
+                        {% for discount in order.shipping_discounts %}
+                            <tr>
+                                <td><span class="badge badge-success">{% trans "Discount" %}</span> {{ discount.offer }}</td>
+                                <td class="text-right">- {{ discount.amount|currency:order.currency }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="total">{% trans "Shipping charge (after discounts)" %}</td>
+                            <td class="total text-right">{{ order.shipping_incl_tax|currency:order.currency }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td class="total">{% trans "Shipping charge" %}</td>
+                            <td class="total text-right">
+                                {% if show_tax_separately %}
+                                    {{ order.shipping_excl_tax|currency:order.currency }}
+                                {% else %}
+                                    {{ order.shipping_incl_tax|currency:order.currency }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endblock shipping_total %}
+
+                {% block surcharges %}
+                    {% with surcharges=order.surcharges.all %}
+                    {% if surcharges %}
+                        <tr>
+                            <td colspan="2"><h3>{% trans "Surcharges" %}</h3></td>
+                        </tr>
+                        {% for charge in surcharges %}
+                            <tr>
+                                <td class="total">{{ charge.name }}</td>
+                                <td class="total text-right">
+                                    {% if show_tax_separately %}
+                                        {{ charge.excl_tax|currency:order.currency }}
+                                    {% else %}
+                                        {{ charge.incl_tax|currency:order.currency }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                {% endblock %}
+
+                {% if show_tax_separately %}
+                    <tr>
+                        <td class="total">{% trans "Order tax" %}</td>
+                        <td class="total text-right">
+                            {{ order.total_tax|currency:order.currency }}
+                        </td>
+                    </tr>
                 {% endif %}
-            {% endwith %}
-        {% endblock post_order_action_totals %}
 
-        {% block order_total %}
-            <tr>
-                <td class="total">{% trans "Order total" %}</td>
-                <td class="total text-right price_color">{{ order.total_incl_tax|currency:order.currency }}</td>
-            </tr>
-        {% endblock order_total %}
-    </table>
+                {% block post_order_action_totals %}
+                    {% with actions=order.post_order_actions %}
+                    {% if actions %}
+                        <tr>
+                            <td colspan="2"><h3>{% trans "Post order actions" %}</h3></td>
+                        </tr>
+                        {% for action in order.post_order_actions %}
+                            <tr>
+                                <td class="total" colspan="2"><p>{{ action.message }}</p></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                {% endblock post_order_action_totals %}
+
+                {% block order_total %}
+                    <tr>
+                        <td class="total">{% trans "Order total" %}</td>
+                        <td class="total text-right price_color">{{ order.total_incl_tax|currency:order.currency }}</td>
+                    </tr>
+                {% endblock order_total %}
+            </tbody>
+        </table>
+    </div>
 </div>
-

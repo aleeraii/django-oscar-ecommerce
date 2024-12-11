@@ -48,13 +48,12 @@
                                                                         <i class="fas fa-check-circle"></i> {% trans "Ship to your default shipping address" %}
                                                                     </button>
                                                                 {% else %}
-                                                                  <button type="button" data-text="Ship to this address" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
+                                                                  <a type="button" data-text="Ship to this address" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
                                                                     {% trans "Ship to this address" %}
-                                                                  </button>
+                                                                  </a>
                                                                 {% endif %}
-                                                                  <a href="{% url 'checkout:user-address-update' pk=address.id %}" class="btn btn-secondary" style="padding:1%; margin-bottom:0.5%">{% trans "Edit address" %}</a>
-                                                                  <a href="{% url 'checkout:user-address-delete' pk=address.id %}" class="btn btn-secondary text-white" style="padding: 1%; margin-bottom: 0.5%;">
-                                                                    <i class="fas fa-trash-alt"></i>
+                                                                  <a href="{% url 'checkout:user-address-update' pk=address.id %}" data-text="edit address" style="background: #6c757d" class="button-one submit-button mt-15">{% trans "Edit address" %}</a>
+                                                                  <a href="{% url 'checkout:user-address-delete' pk=address.id %}" data-text="delete" style="background: #dc3545" class="button-one submit-button mt-15">{% trans "Delete" %}
                                                                 </a>
                                                             </form>
                                                             </br>
@@ -89,7 +88,7 @@
 
                                         <div class="form-group">
                                             <label for="id_line1"></label>
-                                            <input type="text" class="text-gray" name="line1" maxlength="255" placeholder="{% trans 'First line of address' %}" required id="id_line1">
+                                            <input type="text" class="text-gray" name="line1" maxlength="255" placeholder="{% trans 'Address' %}" required id="id_line1">
                                         </div>
 
                                         <div class="form-group">
@@ -117,8 +116,8 @@
                                             <textarea name="notes" class="custom-textarea" cols="40" rows="10" placeholder="{% trans 'Any instructions' %}" id="id_notes"></textarea>
                                         </div>
 
-                                        <button type="submit" class="button-one submit-button mt-15" data-text="continue" data-loading-text="{% trans 'Continuing...' %}">{% trans "Continue" %}</button>
-                                        {% trans "or" %} <a href="{% url 'basket:summary' %}">{% trans "return to basket" %}</a>
+                                        <button type="submit" class="button-one submit-button mt-15" data-text="save and continue" data-loading-text="{% trans 'Continuing...' %}">{% trans "Save and Continue" %}</button>
+                                        {% trans "OR" %} <a style="color: #c0a16b" href="{% url 'basket:summary' %}">{% trans "Return to basket" %}</a>
                                     </form>
                                 </div>
                             </div>
