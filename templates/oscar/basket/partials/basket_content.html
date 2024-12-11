@@ -36,7 +36,7 @@
                             <h6 style="color:gray">{% trans "You could be missing out on offers!" %}</h6>
                             {% for upsell in upsell_messages %}
                                 {% blocktrans with message=upsell.message url=upsell.offer.get_absolute_url offer_name=upsell.offer.name %}
-                                    <div class="warning">{{ message }} to qualify for the <a href="{{ url }}">{{ offer_name }}</a> special offer</div>
+                                    <div class="warning">{{ message }} to qualify for the {{ offer_name }} special offer</div>
                                 {% endblocktrans %}
                             {% endfor %}
                         </div>

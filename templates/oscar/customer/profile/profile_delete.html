@@ -2,20 +2,38 @@
 {% load i18n %}
 
 {% block tabcontent %}
-    <p>{% trans "Please confirm your password to delete your profile." %}</p>
-    <form id="delete_profile_form" method="post">
-        {% csrf_token %}
-        {% include "oscar/partials/form_fields.html" with style='horizontal' %}
-        <div class="alert alert-warning">
-            <h3>{% trans "Warning" %}</h3>
-            {% blocktrans %}
-                This will delete all information about you from the site.  Deleting your profile cannot be
-                undone.
-            {% endblocktrans %}
+<div class="container">
+    <div class="row">
+        <!-- Login Form -->
+        <div class="col-lg-12">
+            <div class="customer-login text-left">
+                <h4 class="title-1 title-border text-uppercase mb-30">
+                    {% trans 'Change Password' %}
+                </h4>
+                <p class="text-gray">{% trans "Please confirm your password to delete your profile." %}</p>
+                <form id="delete_profile_form" method="post">
+                    {% csrf_token %}
+                    {% include "oscar/partials/form_fields.html" with style='horizontal' %}
+                    <div class="alert alert-warning">
+                        <h3>{% trans "Warning" %}</h3>
+                        {% blocktrans %}
+                            This will delete all information about you from the site.  Deleting your profile cannot be
+                            undone.
+                        {% endblocktrans %}
+                    </div>
+                    <div class="form-group">
+                        <button style="background: #dc3545" class="button-one submit-button mt-15" data-text="delete" type="submit" data-loading-text="{% trans 'Deleting...' %}">{% trans "Delete" %}</button>
+                        {% trans "OR" %} <a style="color:#c0a16b" href="{% url "customer:profile-view" %}">{% trans "Cancel" %}</a>.
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <button class="btn btn-lg btn-danger" type="submit" data-loading-text="{% trans 'Deleting...' %}">{% trans "Delete" %}</button>
-            {% trans "or" %} <a href="{% url "customer:profile-view" %}">{% trans "cancel" %}</a>.
-        </div>
-    </form>
+    </div>
+</div>
+<style>
+/* Alert box styling */
+.alert {
+    top:1px;
+}
+</style>
 {% endblock tabcontent %}

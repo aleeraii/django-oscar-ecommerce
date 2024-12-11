@@ -29,9 +29,11 @@
                 <p class="text-uppercase text-light-black mb-0"><strong>{{ number }}</strong></p>
             </div>
         {% endblocktrans %}
-            <div class="single-order-info">
+           <div class="single-order-info">
                 <h4 class="title-1 text-uppercase text-light-black mb-0">Date</h4>
-                <p class="text-uppercase text-light-black mb-0"><strong>13, July 2024</strong></p>
+                <p class="text-uppercase text-light-black mb-0">
+                    <strong id="today-date"></strong>
+                </p>
             </div>
         {% block order_total %}
             <div class="single-order-info">
@@ -72,7 +74,7 @@
                                     <td>{{ order.shipping_address.last_name }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>{% trans "First line of address" %}:</strong></td>
+                                    <td><strong>{% trans "Address" %}:</strong></td>
                                     <td>{{ order.shipping_address.line1 }}</td>
                                 </tr>
                                 <tr>
@@ -281,13 +283,31 @@
                     <div class="col-sm-4">
                         <p><a onclick="window.print()" href="#" data-text="print this page" class="button-one submit-button mt-15">{% trans "Print this page" %}</a></p>
                     </div>
-                    <div class="col-sm-4 offset-sm-4">
-                        <p><a href="{{ homepage_url }}" data-text="continue shopping" class="button-one submit-button mt-15">{% trans "Continue shopping" %}</a></p>
+                   <div class="col-sm-2 offset-sm-2">
+                        <p><a style="padding:1px 10px " href="{{ homepage_url }}" data-text="continue shopping" class="button-one submit-button mt-15 text-wrap">{% trans "Continue shopping" %}</a></p>
                     </div>
                 </div>
             </div>
 
         {% endblock order_actions %}
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get today's date
+                var today = new Date();
+
+                // Get the day, month, and year
+                var day = today.getDate();
+                var month = today.toLocaleString('default', { month: 'long' }); // Get the full month name
+                var year = today.getFullYear();
+
+                // Format the date as "date, month year"
+                var formattedDate = day + ', ' + month + ' ' + year;
+
+                // Insert the formatted date into the element with id="today-date"
+                document.getElementById('today-date').textContent = formattedDate;
+            });
+        </script>
 
         {% endblock content %}
 
