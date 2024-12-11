@@ -9,7 +9,7 @@
     <div class="form-group{% if style == 'horizontal' %} row{% endif %}">
         <div class="{% if style == 'horizontal' %}offset-sm-4 col-sm-8{% endif %}">
             <button class="button-one submit-button mt-15" data-text="save" type="submit" data-loading-text="{% trans 'Saving...' %}">{% trans "Save" %}</button>
-            {% trans "OR" %} <a style="color:#c0a16b" href="#" onclick="window.history.go(-1);return false" >{% trans "Cancel" %}</a>.
+            <button class="button-one submit-button mt-15" style="background:#6c757d" data-text="Cancel" href="#" onclick="window.history.go(-1);return false" >{% trans "Cancel" %}</button>
         </div>
     </div>
 </form>
