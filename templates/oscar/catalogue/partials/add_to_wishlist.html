@@ -9,12 +9,12 @@
                 <a href="#" class="wishlist-icon" data-bs-toggle="dropdown" title="{% trans 'Add to wish list' %}">
                     <i class="zmdi {% if product_wishlists %}zmdi-favorite{% else %}zmdi-favorite-outline{% endif %}" style="{% if product_wishlists %}color: #c0a16b;{% endif %}"></i>
                 </a>
-                <span class="dropdown-menu dropdown-menu-right custom-dropdown-menu">
+                <span class="dropdown-menu custom-dropdown-menu">
                     {% for wishlist in wishlists %}
                         {% if wishlist not in product_wishlists %}
                             <form method="POST" action="{% url 'customer:wishlists-add-product' key=wishlist.key product_pk=product.pk %}" class="dropdown-item" style="color:#c0a16b">
                                 {% csrf_token %}
-                                <div class="form-group">
+                                <div class="">
                                         <button type="submit" style="color:#c0a16b">{% trans 'Add to Wish List' %}</button>
                                 </div>
                             </form>
@@ -48,6 +48,11 @@
     border: 2px solid #c0a16b;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --bs-dropdown-link-active-bg:none;
+}
+
+.dropdown-item:hover{
+    background-color: white;
 }
 
 /* Style each dropdown item */

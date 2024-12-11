@@ -23,7 +23,7 @@
                 {% include "oscar/partials/form_fields.html" with form=form style='horizontal' %}
                 <div class="offset-sm-4 col-sm-8">
                   <button type="submit"  data-text="continue" class="button-one submit-button mt-15" data-loading-text="{% trans 'Continuing...' %}">{% trans "Continue" %}</button>
-                    {% trans "or" %} <a href="{% url 'basket:summary' %}">{% trans "return to basket" %}</a>
+                    {% trans "OR" %} <a style="color:#c0a16b" href="{% url 'basket:summary' %}">{% trans "Return to basket" %}</a>
                 </div>
             </form>
         </div>

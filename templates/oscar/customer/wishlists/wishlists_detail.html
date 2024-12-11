@@ -5,29 +5,62 @@
 {% load currency_filters %}
 {% load purchase_info_tags %}
 
+{% block breadcrumbs %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "Product View" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                             <li>
+                                <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'customer:wishlists-list' %}">{% trans 'Wish Lists' %}</a>
+                            </li>
+                            <li aria-current="page">
+<!--                                {{ wishlist.name }}-->
+                                My wishlist
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
 
 {% block tabcontent %}
    <!-- Nav tabs -->
-<ul class="cart-page-menu nav row clearfix mb-30">
-    <li><a class="active" href="#wishlist" data-bs-toggle="tab">Wishlist</a></li>
-</ul>
+<!--<ul class="cart-page-menu nav row clearfix mb-30">-->
+<!--    <li><a class="active" href="#wishlist" data-bs-toggle="tab">Wishlist</a></li>-->
+<!--</ul>-->
 
 <!-- Tab panes -->
 <div class="tab-content">
     <!-- Wishlist Start -->
     <div class="tab-pane active" id="wishlist">
-
-            <form method="post">
-                {{ form.management_form }}
-                {% csrf_token %}
                 <div class="shop-cart-table">
                     <div class="table-content table-responsive">
+                        <form method="post">
+                        {{ form.management_form }}
+                           {% csrf_token %}
                         <table>
                             <thead>
                                 <tr>
-                                     <th>{% trans 'Product' %}</th>
-                                     <th>{% trans 'Price' %}</th>
-                                     <th>{% trans 'Remove' %}</th>
+                                    <th class="product-thumbnail">Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th>{% trans 'Quantity' %}</th>
+                                    <th class="product-stock">stock status</th>
+                                    <th class="product-remove">Remove</th>
                                 </tr>
                             </thead>
                             {% if form.total_form_count %}
@@ -36,22 +69,39 @@
                                     {% with line=subform.instance product=subform.instance.product %}
                                         <tr>
                                            <td class="product-thumbnail">
-                                                    <div class="product-img">
-                                                        {{ form.id }}
-                                                        {% with image=product.primary_image %}
-                                                            {% oscar_thumbnail image.original "90x90" upscale=False as thumb %}
-                                                                <a href="{{ product.get_absolute_url }}">
-                                                                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}"/>
-                                                                </a>
-                                                            {% endwith %}
-                                                        </div>
-                                                    </div>
+                                                <div class="product-img">
+                                                    {{ form.id }}
+                                                    {% with image=product.primary_image %}
+                                                        {% oscar_thumbnail image.original "90x90" upscale=False as thumb %}
+                                                            <a href="{{ product.get_absolute_url }}">
+                                                                <img src="{{ thumb.url }}" alt="{{ product.get_title }}"/>
+                                                            </a>
+                                                        {% endwith %}
+                                                </div>
                                                 <div class="product-info">
                                                     <h4 class="post-title"><a class="text-light-black" href="{{ product.get_absolute_url }}">{{ line.title }}</a></h4>
+                                                    <p class="mb-0">{{ product.get_meta_description|slice:":25" }}</p>
                                                 </div>
                                             </td>
+
                                             <td class="product-price">
-                                                {% include 'oscar/catalogue/partials/quick_basket_price.html' with product=line.product %}
+                                                {% include 'oscar/customer/wishlists/wishlist_basket_price.html' with product=line.product %}
+                                            </td>
+
+                                            <td>
+                                                {% for field in subform %}
+                                                    {% render_field field class+="form-control" %}
+                                                    {% for error in field.errors %}
+                                                        <ul class="error-block">
+                                                            <li>{{ error }}</li>
+                                                        </ul>
+                                                    {% endfor %}
+                                                {% endfor %}
+
+                                            </td>
+
+                                            <td class="product-stock">
+                                                {% include 'oscar/customer/wishlists/wishlist_stock_record.html' with product=line.product %}
                                             </td>
 
                                              <td class="product-remove">
@@ -63,6 +113,16 @@
                                     {% endwith %}
                                 {% endfor %}
                             </tbody>
+                            <tr>
+                        <td colspan="2"></td>
+                        <td>
+                           <button style="width: 100%; padding: 0.1px" class="button-one submit-button mt-15" type="submit" data-text="Update quantities">
+                            Update Quantities
+                        </button>
+
+                        </td>
+
+                    </tr>
                        {% else %}
                            <tr>
                                 <td colspan="3">
@@ -71,11 +131,11 @@
                             </tr>
                         {% endif %}
                         </table>
+                        </form>
                     </div>
                 </div>
-            </form>
+             </div>
 
-    </div>
     <!-- Wishlist End -->
 
     <!-- Pagination -->
@@ -83,6 +143,9 @@
         {% include "oscar/partials/pagination.html" %}
     {% endif %}
 </div>
-
+<style>
+    .form-control {
+        width: 100%;
+    }
+</style>
 {% endblock tabcontent %}
-

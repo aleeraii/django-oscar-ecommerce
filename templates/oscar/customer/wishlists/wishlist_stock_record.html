@@ -1,0 +1,18 @@
+{% load currency_filters %}
+{% load i18n %}
+{% load purchase_info_tags %}
+
+{% purchase_info_for_product request product as session %}
+
+{% if session.price.exists %}
+<div class="{{ session.availability.code }} availability">
+    {% if not session.availability.is_available_to_buy %}
+    {% endif %}
+    {% if verbose %}
+    {% else %}
+        {{ session.availability.short_message }}
+    {% endif %}
+</div>
+{% else %}
+    <i class="fas fa-ban"></i>
+{% endif %}
