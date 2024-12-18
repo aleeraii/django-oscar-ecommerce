@@ -128,9 +128,9 @@ WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_API_KEY = "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"
-SENDGRID_EMAIL = "ayesha.arshad@codefulcrum.com"
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
 
 OSCAR_FROM_EMAIL = SENDGRID_EMAIL
 
