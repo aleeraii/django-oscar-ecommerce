@@ -1,0 +1,39 @@
+{% extends "oscar/customer/baseaccountpage.html" %}
+{% load i18n %}
+
+{% block tabcontent %}
+<div class="container">
+    <div class="row">
+        <!-- Login Form -->
+        <div class="col-lg-12">
+            <div class="customer-login text-left">
+                <h4 class="title-1 title-border text-uppercase mb-30">
+                    {% trans 'Change Password' %}
+                </h4>
+                <p class="text-gray">{% trans "Please confirm your password to delete your profile." %}</p>
+                <form id="delete_profile_form" method="post">
+                    {% csrf_token %}
+                    {% include "oscar/partials/form_fields.html" with style='horizontal' %}
+                    <div class="alert alert-warning">
+                        <h3 style="color: #c0a16b">{% trans "Warning" %}</h3>
+                        {% blocktrans %}
+                            This will delete all information about you from the site.  Deleting your profile cannot be
+                            undone.
+                        {% endblocktrans %}
+                    </div>
+                    <div class="form-group">
+                        <button style="background: #dc3545" class="button-one submit-button mt-15" data-text="delete" type="submit" data-loading-text="{% trans 'Deleting...' %}">{% trans "Delete" %}</button>
+                        <button class="button-one submit-button mt-15" style="background:#6c757d" data-text="Cancel" href="#" onclick="window.history.go(-1);return false" >{% trans "Cancel" %}</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+/* Alert box styling */
+.alert {
+    top:1px;
+}
+</style>
+{% endblock tabcontent %}

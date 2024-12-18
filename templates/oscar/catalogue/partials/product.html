@@ -1,0 +1,61 @@
+{% load display_tags %}
+{% load i18n %}
+{% load image_tags %}
+{% load reviews_tags %}
+{% load static %}
+{% load currency_filters %}
+{% load purchase_info_tags %}
+{% load basket_tags %}
+
+{% block product %}
+<div class="col-lg-12">
+    <div class="single-product clearfix">
+        <div class="product-img">
+            {% with image=product.primary_image %}
+                {% oscar_thumbnail image.original "x270" upscale=False as thumb %}
+                <a href="{{ product.get_absolute_url }}">
+                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                </a>
+            {% endwith %}
+        </div>
+        <div class="product-info">
+            <div class="fix">
+                <h4 class="post-title floatleft"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h4>
+            </div>
+            <div class="fix">
+                {% iffeature "reviews" %}
+                    {% if product.rating %}
+                        <span class="pro-rating floatright">
+                            {% for i in "12345"|slice:":5" %}
+                                {% if forloop.counter <= product.rating %}
+                                    <a href="#"><i class="zmdi zmdi-star"></i></a>
+                                {% else %}
+                                    <i class="zmdi zmdi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                {% endiffeature %}
+                {% if not product.rating %}
+                    <span class="pro-rating floatright">
+                        {% for i in "12345"|slice:":5" %}
+                            <i class="zmdi zmdi-star"></i>
+                        {% endfor %}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="fix mb-20">
+                <span class="pro-price">
+                    {% include "oscar/catalogue/partials/stock_record.html" %}
+                </span>
+            </div>
+            <div class="product-description">
+                <p>{{ product.get_meta_description | truncatewords:50 }}</p>
+            </div>
+
+           {% include "oscar/catalogue/partials/product_cart_view.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

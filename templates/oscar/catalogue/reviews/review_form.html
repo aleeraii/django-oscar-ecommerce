@@ -1,0 +1,193 @@
+{% extends "oscar/catalogue/detail.html" %}
+{% load i18n %}
+
+<!-- Add Review Form -->
+{% block product_review %}
+<div class="leave-review">
+    <h3 class="tab-title title-border mb-30">{% trans "Leave your review" %}</h3>
+
+    <form method="post" action="{% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id %}" id="add_review_form">
+        {% csrf_token %}
+
+
+        <!-- Hidden Input for Rating Score -->
+        <input type="hidden" name="score" id="rating-score" required />
+
+        <!-- Name and Subject Fields -->
+        <div class="row">
+            <div class="col-md-6">
+                <input
+                    type="text"
+                    placeholder="{% trans 'Your name here...' %}"
+                    name="name"
+                    {% if user.is_authenticated %}
+                        value="{{ user.get_full_name }}" readonly
+                    {% else %}
+                        required
+                    {% endif %}
+                />
+            </div>
+
+            <!-- Email Field for Unauthenticated Users -->
+            {% if not user.is_authenticated %}
+                <div class="col-md-6">
+                    <input
+                        type="email"
+                        placeholder="{% trans 'Your email here...' %}"
+                        name="email"
+                        required
+                    />
+                </div>
+            {% endif %}
+
+            <div class="col-md-6">
+                <input type="text" placeholder="{% trans 'Subject...' %}" name="title" required />
+            </div>
+        </div>
+
+        <!-- Review Body -->
+        <div class="row">
+            <div class="col-md-12">
+                <textarea class="custom-textarea" name="body" placeholder="{% trans 'Your review here...' %}" required></textarea>
+            </div>
+        </div>
+
+                <!-- Rating Section -->
+        <div class="your-rating mb-30">
+<!--            <p class="mb-10"><strong>{% trans "Your Rating" %}</strong></p>-->
+
+            <div class="stars">
+                <!-- Only 5 stars here -->
+                <span class="star" data-score="1">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="2">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="3">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="4">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+                <span class="star" data-score="5">
+                    <i class="zmdi zmdi-star-outline"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" data-text="submit review" class="button-one submit-button mt-20" id="submit-review-btn">{% trans 'Submit Review' %}</button>
+    </form>
+</div>
+<style>
+.stars {
+    display: flex;
+    justify-content: center;  /* Centers the stars horizontally */
+    gap: 5px;  /* Space between the stars */
+    font-size: 30px; /* Increases the size of the stars */
+}
+
+.star i {
+    font-size: 30px;  /* Make the stars even larger */
+    color: #ccc;  /* Default color (light grey) */
+    cursor: pointer;
+    transition: color 0.3s ease;  /* Smooth color transition */
+}
+
+/* Change the color of stars when selected */
+.star i.zmdi-star {
+    color: #c0a16b;  /* Golden color when the star is selected */
+}
+
+.star i.zmdi-star-outline {
+    color: #ccc;  /* Light grey color for unselected stars */
+}
+
+
+/* Styling for the Submit button */
+.submit-button {
+    display: block;
+    margin: 30px auto 0;  /* Center the submit button and add top margin */
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* Additional margin adjustments for the form fields */
+.row {
+    margin-bottom: 15px;
+}
+
+.col-md-6 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+</style>
+{% endblock %}
+
+{% block extrascripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const stars = document.querySelectorAll('.stars .star');
+        const ratingInput = document.getElementById('rating-score');
+        const submitButton = document.getElementById('submit-review-btn');
+        let currentSelectedScore = parseInt(ratingInput.value) || 0; // Current selected score
+
+        // Function to update the stars based on the rating
+        function updateStars(selectedScore) {
+            stars.forEach(star => {
+                const starIcon = star.querySelector('i');
+                const score = parseInt(star.getAttribute('data-score'));
+
+                // Highlight the stars up to the selected score
+                if (score <= selectedScore) {
+                    starIcon.classList.add('zmdi-star');
+                    starIcon.classList.remove('zmdi-star-outline');
+                } else {
+                    starIcon.classList.add('zmdi-star-outline');
+                    starIcon.classList.remove('zmdi-star');
+                }
+            });
+        }
+
+        // Handle hover effect
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const score = parseInt(star.getAttribute('data-score'));
+                updateStars(score); // Highlight up to the hovered score
+            });
+
+            star.addEventListener('mouseout', function() {
+                // Reset the stars to the selected score
+                updateStars(currentSelectedScore);
+            });
+
+            // Handle click event
+            star.addEventListener('click', function() {
+                const score = parseInt(star.getAttribute('data-score'));
+                ratingInput.value = score; // Set the rating in the hidden input
+                currentSelectedScore = score; // Update the current selected score
+                updateStars(score); // Update the UI with the selected rating
+            });
+        });
+
+        // Initialize the stars based on the hidden input value
+        updateStars(currentSelectedScore);
+
+        // Prevent form submission if no rating has been selected
+        submitButton.addEventListener('click', function(event) {
+            if (!ratingInput.value) {
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    });
+</script>
+{% endblock %}
+

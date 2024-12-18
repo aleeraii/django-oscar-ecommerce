@@ -1,0 +1,89 @@
+{% extends "oscar/layout.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans 'Login or register' %} | {{ block.super }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "Registration" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                         <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
+                            </li>
+                            <li class="" aria-current="page">{% trans 'Registration' %}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block header %}{% endblock %}
+
+{% block content %}
+
+<div class="login-area pt-80 pb-80">
+    <div class="container">
+        <div class="row">
+            <!-- Login Form -->
+            <div class="col-lg-6">
+                <div class="customer-login text-left">
+                    <h4 class="title-1 title-border text-uppercase mb-30">
+                        {% trans 'Registered customers' %}
+                    </h4>
+                    <p class="text-gray">
+                        {% trans 'If you have an account with us, please login!' %}
+                    </p>
+                    <form id="login_form" action="{{ request.get_full_path }}" method="post" class="">
+                        {% csrf_token %}
+                        <input type="email" name="login-username" placeholder="Email" maxlength="150" class="" required="" id="id_login-username">
+                        <input type="password" placeholder="Password" name="login-password" autocomplete="current-password" class="" required="" id="id_login-password">
+                        <p><a style="color: #c0a16b" href="{% url 'password-reset' %}" class="text-gray">
+                            {% trans "Forgot your password?" %}
+                        </a></p>
+                        <button name="login_submit" data-text="login" type="submit" value="Log In" class="button-one submit-button mt-15">
+                            {% trans 'Log In' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div class="col-lg-6">
+                <div class="customer-login text-left">
+                    <h4 class="title-1 title-border text-uppercase mb-30">
+                        {% trans 'New customers' %}
+                    </h4>
+                    <p class="text-gray">
+                        {% trans 'If you dont have an account with us, please register!' %}
+                    </p>
+                    <form id="register_form" action="{{ request.get_full_path }}" method="post" class="">
+                        {% csrf_token %}
+                        <input type="email" placeholder="Email" name="registration-email" maxlength="320" class="" required="" id="id_registration-email">
+                        <input type="password" placeholder="Password" name="registration-password1" class="" required="" id="id_registration-password1">
+                        <input type="password" placeholder="Confirm Password" name="registration-password2" class="" required="" id="id_registration-password2">
+                        <button name="registration_submit" data-text="Register" type="submit" value="Register" class="button-one submit-button mt-15">
+                            {% trans 'Register' %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SHOPPING-CART-AREA END -->
+
+
+{% endblock content %}

@@ -1,0 +1,137 @@
+{% load display_tags %}
+{% load i18n %}
+{% load image_tags %}
+{% load reviews_tags %}
+{% load static %}
+{% load currency_filters %}
+{% load purchase_info_tags %}
+{% load basket_tags %}
+
+<!-- Quantity input and Add to Cart Form -->
+<div class="clearfix">
+    <div class="cart-style">
+        <input type="number" value="1" name="qtybutton" class="cart-plus-minus-box" min="1" data-product-id="{{ product.id }}">
+    </div>
+    <div class="product-action clearfix">
+        <!-- Wishlist functionality -->
+        {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
+
+        <!-- Add to Cart form with quantity -->
+        {% purchase_info_for_product request product as session %}
+        {% if session.availability.is_available_to_buy and session.price.exists %}
+            <form action="{% url 'basket:add' pk=product.pk %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                <!-- Hidden quantity field that updates based on the input value -->
+                <input type="hidden" name="quantity" id="quantity_input_{{ product.id }}" value="1">
+                <div class="no-bar">
+                    <a href="#" onclick="this.closest('form').submit();" data-bs-toggle="tooltip" data-placement="top" title="{% trans 'Add To Cart' %}">
+                        <i class="zmdi zmdi-shopping-cart-plus"></i>
+                    </a>
+                </div>
+            </form>
+        {% else %}
+            <span>
+                <div class="no-bar">
+                    <a href="#" title="{% trans 'Unavailable' %}" onclick="showAlert(); return false;">
+                        <i class="zmdi zmdi-shopping-cart-plus"></i>
+                    </a>
+                </div>
+            </span>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function showAlert() {
+    // Create a new alert div
+    var alertDiv = document.createElement('div');
+    alertDiv.classList.add('alert', 'alert-danger', 'fade', 'show', 'alert-slide-in');
+
+    // Add message content with the "Unavailable" text and icon
+    var alertContent = document.createElement('div');
+    alertContent.classList.add('alertinner');
+    alertContent.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + '{% trans "This product is out of stock." %}';
+
+    // Add progress bar
+    var progressBar = document.createElement('div');
+    progressBar.classList.add('progress-bar');
+    progressBar.style.height = '4px';
+    progressBar.style.backgroundColor = '#c0a16b';
+    progressBar.style.position = 'absolute';
+    progressBar.style.bottom = '0';
+    progressBar.style.left = '0';
+    progressBar.style.width = '100%';  // Initially set to 100%
+
+    // Append progress bar and content to the alert div
+    alertDiv.appendChild(alertContent);
+    alertDiv.appendChild(progressBar);
+
+    // Append the alert to the #messages container
+    document.getElementById('messages').appendChild(alertDiv);
+
+    // Gradually decrease the progress bar width to 0% over 5 seconds
+    var width = 100;
+    var progressInterval = setInterval(function() {
+        if (width <= 0) {
+            clearInterval(progressInterval); // Stop the interval once the width reaches 0
+            alertDiv.remove(); // Remove the alert
+        } else {
+            width--; // Decrease width
+            progressBar.style.width = width + '%'; // Update the progress bar width
+        }
+    }, 50); // Update the width every 50 milliseconds
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Select all quantity input fields
+    const qtyInputs = document.querySelectorAll('.cart-plus-minus-box');
+
+    // Loop through each quantity input field
+    qtyInputs.forEach(function (qtyInput) {
+        // Find the hidden quantity input corresponding to this product
+        const productId = qtyInput.getAttribute('data-product-id');
+        const hiddenQtyInput = document.getElementById('quantity_input_' + productId);
+
+        // Check if hidden quantity input exists
+        if (hiddenQtyInput) {
+            // Update the hidden input when the quantity changes
+            qtyInput.addEventListener('input', function () {
+                hiddenQtyInput.value = qtyInput.value;
+            });
+        }
+    });
+});
+</script>
+
+<style>
+
+    .no-bar a::before {
+      background: none;
+    }
+
+    .cart-style {
+    background: #f6f6f6 none repeat scroll 0 0;
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    text-align: center;
+    width: 25%;
+}
+input.cart-plus-minus-box {
+  background: #f6f6f6 none repeat scroll 0 0;
+  float: left;
+  font-size: 16px;
+  padding-left:2% ;
+  text-align: center;
+  width: 73.33%;
+  margin-left: 20%;
+  border:none;
+}
+
+input.cart-plus-minus-box:focus {
+    outline: none;
+}
+</style>

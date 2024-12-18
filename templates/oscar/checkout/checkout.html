@@ -1,0 +1,271 @@
+{% extends "oscar/checkout/layout.html" %}
+{% load currency_filters %}
+{% load i18n %}
+{% load image_tags %}
+{% load purchase_info_tags %}
+{% load static %}
+
+{% block title %}
+    {% trans "Checkout" %} | {{ block.super }}
+{% endblock %}
+
+{% block checkout_nav %}
+<div class="bg-dark-white">
+    {% include 'oscar/checkout/nav.html' %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+<div class="container">
+  <div class="shop-cart-table check-out-wrap">
+   <div class="row shipping-payment">
+        <!-- Shipping Address Section (Left side) -->
+        {% block shipping_address %}
+            <div class="col-sm-6">
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}
+                         <a href="{% url 'checkout:shipping-address' %}" style="color:#c8a165;font-size: small">
+                                {% trans "(Edit)" %}
+                         </a>
+                    </h4>
+                </div>
+                {% if shipping_address %}
+                    <div>
+                        {% block shipping_address_actions %}
+<!--                            <a href="{% url 'checkout:shipping-address' %}" class="floatright" style="color:#c8a165">-->
+<!--                                {% trans "Change" %}-->
+<!--                            </a>-->
+                        {% endblock %}
+                    <address>
+                      <div class="col-sm-8">
+                        <table class="table">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                <!-- Loop through the fields and display both labels and values -->
+                                <tr>
+                                    <td><strong>{% trans "First name" %}:</strong></td>
+                                    <td>{{ shipping_address.first_name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>{% trans "Last name" %}:</strong></td>
+                                    <td>{{ shipping_address.last_name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>{% trans "Address" %}:</strong></td>
+                                    <td>{{ shipping_address.line1 }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td><strong>{% trans "City" %}:</strong></td>
+                                    <td>{{ shipping_address.line4 }}</td>
+                                </tr>
+
+                                {% if shipping_address.state %}
+                                    <tr>
+                                        <td><strong>{% trans "State/Country" %}:</strong></td>
+                                        <td>{{ shipping_address.state }}</td>
+                                    </tr>
+                                {% endif %}
+
+                                <tr>
+                                    <td><strong>{% trans "Post/Zip code" %}:</strong></td>
+                                    <td>{{ shipping_address.postcode }}</td>
+                                </tr>
+
+                                {% if shipping_address.phone_number %}
+                                    <tr>
+                                        <td><strong>{% trans "Phone" %}:</strong></td>
+                                        <td>{{ shipping_address.phone_number }}</td>
+                                    </tr>
+                                {% endif %}
+
+                                {% if shipping_address.notes %}
+                                    <tr>
+                                        <td><strong>{% trans "Instructions" %}:</strong></td>
+                                        <td>{{ shipping_address.notes|linebreaks }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                      </div>
+                    </address>
+                    </div>
+                {% endif %}
+            </div>
+           <!-- Right side: Shipping Method and Payment Method -->
+            <div class="col-sm-6">
+            <!-- Shipping Method Section -->
+            {% if shipping_method %}
+                <div>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping method" %}
+                     <a href="{% url 'checkout:shipping-method' %}" style="color:#c8a165; font-size: small">
+                            {% trans "(Edit)" %}
+                        </a>
+                    </h4>
+                    {% block shipping_method_actions %}
+<!--                        <a href="{% url 'checkout:shipping-method' %}" class="floatright" style="color:#c8a165">-->
+<!--                            {% trans "Change" %}-->
+<!--                        </a>-->
+                    {% endblock %}
+                    <p>{{ shipping_method.name }}
+                        {% if shipping_method.description %}
+                            - {{ shipping_method.description|safe }}
+                        {% endif %}
+                    </p>
+                </div></br>
+            {% endif %}
+        {% endblock shipping_address %}
+
+            <!-- Payment Method Section -->
+            {% block payment_method %}
+                <div>
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}
+                        <a href="{% url 'checkout:payment-details' %}" style="color:#c8a165; font-size: small">
+                        {% trans "(Edit)" %}
+                    </a>
+                    </h4>
+<!--                    <a href="{% url 'checkout:payment-details' %}" class="floatright" style="color:#c8a165">-->
+<!--                        {% trans "Change" %}-->
+<!--                    </a>-->
+                    <p>{% trans "Payment details to go here" %}</p>
+                </div>
+            {% endblock payment_method %}
+        </div>
+    </div>
+
+    {% block order_contents %}
+        <div class="sub-header">
+            <div class="">
+            {% block order_contents_actions %}
+<!--                <a href="{% url 'basket:summary' %}" class="floatright" style="color:#c8a165">-->
+<!--                    {% trans "Edit order contents" %}-->
+<!--                </a>-->
+                 <div class="col-sm-6">&nbsp;</div>
+                 <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Order contents" %}
+                   <a href="{% url 'basket:summary' %}" style="color:#c8a165; font-size: small">
+                    {% trans "(Edit)" %}
+                </a>
+                 </h4>
+            {% endblock %}
+            </div>
+
+            <div class="">
+              <div class="">
+                <div class="table-content table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail">Product</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quantity">Quantity</th>
+                                <th class="product-subtotal">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for line in basket.all_lines %}
+                                {% purchase_info_for_line request line as session %}
+                                <tr>
+                                    <!-- Product Thumbnail -->
+                                    <td class="product-thumbnail text-left">
+                                        <div class="single-product">
+                                            <div class="product-img">
+                                                <a href="{{ line.product.get_absolute_url }}">
+                                                    {% with image=line.product.primary_image %}
+                                                        {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
+        <!--                                                <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" />-->
+                                                        <img src="{{thumb.url}}" alt="{{ line.product.get_title }}" />
+                                                    {% endwith %}
+                                                </a>
+                                            </div>
+                                            <div class="product-info">
+                                                <h4 class="post-title">
+                                                    <a class="text-light-black" href="{{ line.product.get_absolute_url }}">
+                                                        {{ line.product.get_title }}
+                                                    </a>
+                                                </h4>
+                                                <p class="mb-0">{{ line.description }}</p>
+                                                <span class="availability {{ session.availability.code }}">{{ session.availability.message }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Product Price -->
+                                    <td class="product-price">
+                                        {% if not line.unit_price_incl_tax and not line.unit_tax_excl_tax %}
+                                            <p>&mdash;</p>
+                                        {% else %}
+                                            <p class="price_color text-right">
+                                                {% if line.is_tax_known %}
+                                                    {{ line.unit_price_incl_tax|currency:basket.currency }}
+                                                {% else %}
+                                                    {{ line.unit_price_excl_tax|currency:basket.currency }}
+                                                {% endif %}
+                                            </p>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- Product Quantity -->
+                                    <td class="product-quantity text-center">
+                                        <h6 class="title-1 text-uppercase mb-30">{{ line.quantity }}</h6>
+                                    </td>
+
+                                    <!-- Product Subtotal -->
+                                    <td class="product-subtotal text-right">
+                                        {% if not line.line_price_incl_tax and not line.line_price_excl_tax %}
+                                            <p>&mdash;</p>
+                                        {% else %}
+                                            <p class="price_color text-right">
+                                                {% if line.is_tax_known %}
+                                                    {{ line.line_price_incl_tax|currency:basket.currency }}
+                                                {% else %}
+                                                    {{ line.line_price_excl_tax|currency:basket.currency }}
+                                                {% endif %}
+                                            </p>
+                                        {% endif %}
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        <div class="row">
+            <div class="row">
+                <div class="col-sm-6">&nbsp;</div>
+                    <div class="col-sm-6">
+                         <div class="payment-details mt-20">
+                            <h2 class="title-1 title-border text-uppercase mb-30">{% trans 'Totals' %}</h2>
+                            {% include 'oscar/basket/partials/basket_totals.html' %}
+                        </div>
+                    </div>
+              </div>
+            </div>
+
+        {% endblock order_contents %}
+
+        {% block shipping_method %}
+        {% endblock shipping_method %}
+
+        {% block payment_details %}
+        {% endblock payment_details %}
+
+        {% block place_order %}
+        {% endblock place_order %}
+    </div>
+</div>
+{% endblock content %}
+

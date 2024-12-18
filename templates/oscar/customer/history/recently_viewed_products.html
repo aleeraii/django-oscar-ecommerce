@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load product_tags %}
+{% load image_tags %}
+{% load static %}
+
+ <aside class="widget widget-product mb-30">
+    <div class="widget-title">
+        <h4>Recent products</h4>
+        </div>
+            <div class="widget-info sidebar-product clearfix">
+                {% with products_sliced=products|slice:":4" %}
+                  {% if products_sliced %}
+                    {% for product in products_sliced %}
+                        <!-- Single-product start -->
+                        <div class="single-product">
+                            <div class="product-img">
+                                 {% with image=product.primary_image %}
+                                    {% oscar_thumbnail image.original "270x270" upscale=False as thumb %}
+                                    <a href="{{ product.get_absolute_url }}">
+                                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                                    </a>
+                                {% endwith %}
+                            </div>
+                            <div class="product-info">
+                               <a href="{{ product.get_absolute_url }}">
+                                   <h4 class="post-title">
+                                    {{ product.title }}
+                                   </h4>
+                               </a>
+                                {% include "oscar/catalogue/partials/stock_record.html" %}
+                            </div>
+                        </div>
+                    <!-- Single-product end -->
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+</aside>

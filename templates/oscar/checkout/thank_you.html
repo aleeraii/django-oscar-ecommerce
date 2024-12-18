@@ -1,0 +1,320 @@
+{% extends "oscar/checkout/layout.html" %}
+{% load currency_filters %}
+{% load i18n %}
+{% load image_tags %}
+{% load purchase_info_tags %}
+{% load static %}
+
+{% block title %}
+    {% blocktrans with number=order.number %}
+        Order {{ number }}: confirmation
+    {% endblocktrans %} | {{ block.super }}
+{% endblock title %}
+
+{% block checkout_nav %}
+    {% include 'oscar/checkout/nav.html' with step=5 %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+         <div class="col-sm-6">&nbsp;</div>
+        <div class="thank-recieve mb-30" style="background:#c0a16b">
+            <p class="text-white">Thank you. Your order has been received.</p>
+        </div>
+
+         <div class="order-info bg-white text-center clearfix mb-30">
+        {% blocktrans with number=order.number %}
+            <div class="single-order-info">
+                <h4 class="title-1 text-uppercase text-light-black mb-0">order no</h4>
+                <p class="text-uppercase text-light-black mb-0"><strong>{{ number }}</strong></p>
+            </div>
+        {% endblocktrans %}
+           <div class="single-order-info">
+                <h4 class="title-1 text-uppercase text-light-black mb-0">Date</h4>
+                <p class="text-uppercase text-light-black mb-0">
+                    <strong id="today-date"></strong>
+                </p>
+            </div>
+        {% block order_total %}
+            <div class="single-order-info">
+                <h4 class="title-1 text-uppercase text-light-black mb-0">Total</h4>
+                <p class="text-uppercase text-light-black mb-0"><strong>{{ order.total_incl_tax|currency:order.currency }}</strong></p>
+            </div>
+         {% endblock order_total %}
+            <div class="single-order-info">
+                <h4 class="title-1 text-uppercase text-light-black mb-0">payment method</h4>
+                <p class="text-uppercase text-light-black mb-0"><a href="#"><strong>check payment</strong></a></p>
+            </div>
+        </div>
+
+      <div class="shop-cart-table check-out-wrap">
+       <div class="row">
+            {% block shipping_info %}
+            <div class="col-sm-6">
+                <!-- Shipping Address Section (Left side) -->
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping Address" %}</h4>
+                </div>
+
+                {% if order.shipping_address %}
+                <div>
+                    {% block shipping_address_actions %}
+                    {% endblock %}
+                    <address>
+                        <div class="col-sm-8">
+                        <table class="table">
+                            <tbody>
+                                <!-- Loop through address fields and display labels and values -->
+                                <tr>
+                                    <td><strong>{% trans "First name" %}:</strong></td>
+                                    <td>{{ order.shipping_address.first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Last name" %}:</strong></td>
+                                    <td>{{ order.shipping_address.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "Address" %}:</strong></td>
+                                    <td>{{ order.shipping_address.line1 }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans "City" %}:</strong></td>
+                                    <td>{{ order.shipping_address.line4 }}</td>
+                                </tr>
+                                {% if order.shipping_address.state %}
+                                <tr>
+                                    <td><strong>{% trans "State/Country" %}:</strong></td>
+                                    <td>{{ order.shipping_address.state }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td><strong>{% trans "Post/Zip code" %}:</strong></td>
+                                    <td>{{ order.shipping_address.postcode }}</td>
+                                </tr>
+                                {% if order.shipping_address.phone_number %}
+                                <tr>
+                                    <td><strong>{% trans "Phone" %}:</strong></td>
+                                    <td>{{ order.shipping_address.phone_number }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if order.shipping_address.notes %}
+                                <tr>
+                                    <td><strong>{% trans "Instructions" %}:</strong></td>
+                                    <td>{{ order.shipping_address.notes|linebreaks }}</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        </div>
+                    </address>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Shipping Method Section (Right side) -->
+            <div class="col-sm-6">
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Shipping method" %}</h4>
+                </div>
+                {% if order.shipping_method %}
+                <p>{{ order.shipping_method }}
+                    {% if order.shipping_method.description %}
+                    - {{ order.shipping_method.description|safe }}
+                    {% endif %}
+                </p>
+                {% endif %}
+            {% endblock shipping_info %}
+
+            {# You will almost certainly want to override this block to provide a payment summary #}
+            {% block payment_info %}
+                <div class="sub-header">
+                    <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Payment" %}</h4>
+                </div>
+                {% for source in order.sources.all %}
+                <p>
+                    {% if source.reference %}
+                    {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name reference=source.reference %}
+                    Allocation of {{ amount }} from type {{ type }} (reference: {{ reference }})
+                    {% endblocktrans %}
+                    {% else %}
+                    {% blocktrans with amount=source.amount_allocated|currency:source.currency type=source.source_type.name %}
+                    Allocation of {{ amount }} from type {{ type }}
+                    {% endblocktrans %}
+                    {% endif %}
+                </p>
+                {% empty %}
+                <p>
+                    {% trans "No payment was required for this order." %}
+                </p>
+                {% endfor %}
+
+                {% if order.billing_address %}
+                <h4>{% trans "Billing Address" %}</h4>
+                <address>
+                    {% for field in order.billing_address.active_address_fields %}
+                    {{ field }}<br/>
+                    {% endfor %}
+                </address>
+                {% endif %}
+            </div>
+            {% endblock payment_info %}
+        </div>
+
+        {% block order_contents %}
+            <div class="sub-header">
+                <div class="">
+                {% block order_contents_actions %}
+                     <div class="col-sm-6">&nbsp;</div>
+                     <h4 class="title-1 title-border text-uppercase mb-30">{% trans "Order contents" %} </h4>
+                {% endblock %}
+                </div>
+
+                <div class="">
+                  <div class="">
+                    <div class="table-content table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="product-thumbnail">Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-subtotal">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in order.lines.all %}
+                                    {% purchase_info_for_line request line as session %}
+                                    <tr>
+                                        <!-- Product Thumbnail -->
+                                        <td class="product-thumbnail text-left">
+                                            <div class="single-product">
+                                                <div class="product-img">
+                                                    <a href="{{ line.product.get_absolute_url }}">
+                                                        {% with image=line.product.primary_image %}
+                                                            {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
+                                                            <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}" />
+                                                        {% endwith %}
+                                                    </a>
+                                                </div>
+                                                <div class="product-info">
+                                                    <h4 class="post-title">
+                                                        <a class="text-light-black" href="{{ line.product.get_absolute_url }}">
+                                                            {{ line.product.get_title }}
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <!-- Product Price -->
+                                        <td class="product-price">
+                                            {% if not line.unit_price_incl_tax and not line.unit_tax_excl_tax %}
+                                                <p>&mdash;</p>
+                                            {% else %}
+                                                <p class="price_color text-right">
+                                                    {% if line.is_tax_known %}
+                                                        {{ line.unit_price_incl_tax|currency:order.currency }}
+                                                    {% else %}
+                                                        {{ line.unit_price_excl_tax|currency:order.currency }}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+                                        </td>
+
+                                        <!-- Product Quantity -->
+                                        <td class="product-quantity text-center">
+                                            <h6 class="title-1 text-uppercase mb-30">{{ line.quantity }}</h6>
+                                        </td>
+
+                                        <!-- Product Subtotal -->
+                                        <td class="product-subtotal text-right">
+                                            {% if not line.line_price_incl_tax and not line.line_price_excl_tax %}
+                                                <p>&mdash;</p>
+                                            {% else %}
+                                                <p class="price_color text-right">
+                                                    {% if line.is_tax_known %}
+                                                        {{ line.line_price_incl_tax|currency:order.currency }}
+                                                    {% else %}
+                                                        {{ line.line_price_excl_tax|currency:order.currency }}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {% block basket_totals %}
+           <div class="row">
+                <div class="row">
+                    <div class="col-sm-6">&nbsp;</div>
+                        <div class="col-sm-6">
+                             <div class="payment-details mt-20">
+                                <h2 class="title-1 title-border text-uppercase mb-30">{% trans 'Totals' %}</h2>
+                               {% include 'oscar/order/partials/basket_totals.html' %}
+                            </div>
+                        </div>
+                  </div>
+                </div>
+            {% endblock basket_totals %}
+
+        {% endblock order_contents %}
+
+        {% block order_tracking %}
+            {% if not order.user %}
+                <div class="sub-header">
+                    <h2>{% trans "Tracking your order" %}</h2>
+                </div>
+                <p>{% trans "You can track the status of your order" %}
+                    <a class="btn btn-primary" href="{% url 'customer:anon-order' order_number=order.number hash=order.verification_hash %}">{% trans "View order status" %}</a>.</p>
+            {% endif %}
+        {% endblock %}
+
+
+        {% block order_actions %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p><a onclick="window.print()" href="#" data-text="print this page" class="button-one submit-button mt-15">{% trans "Print this page" %}</a></p>
+                    </div>
+                   <div class="col-sm-2 offset-sm-2">
+                        <p><a style="padding:1px 10px " href="{{ homepage_url }}" data-text="continue shopping" class="button-one submit-button mt-15 text-wrap">{% trans "Continue shopping" %}</a></p>
+                    </div>
+                </div>
+            </div>
+
+        {% endblock order_actions %}
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get today's date
+                var today = new Date();
+
+                // Get the day, month, and year
+                var day = today.getDate();
+                var month = today.toLocaleString('default', { month: 'long' }); // Get the full month name
+                var year = today.getFullYear();
+
+                // Format the date as "date, month year"
+                var formattedDate = day + ', ' + month + ' ' + year;
+
+                // Insert the formatted date into the element with id="today-date"
+                document.getElementById('today-date').textContent = formattedDate;
+            });
+        </script>
+
+        {% endblock content %}
+
+        {% block tracking %}
+            {% if send_analytics_event %}
+                {% include "oscar/partials/google_analytics_transaction.html" %}
+            {% endif %}
+        {% endblock %}
+     </div>
+</div>

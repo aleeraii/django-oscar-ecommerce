@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from oscar.defaults import *
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +30,7 @@ SECRET_KEY = 'django-insecure-(h@!^^v1j7^6#6%s4(oqg_x*gtl!cje82%ng=3@(a!s#762&cd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -100,7 +104,7 @@ ROOT_URLCONF = 'onestore_ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,13 +124,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
+
+OSCAR_FROM_EMAIL = SENDGRID_EMAIL
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
 
@@ -189,3 +207,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+OSCAR_PRODUCTS_PER_PAGE = 9
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://3117-182-187-142-251.ngrok-free.app',
+]

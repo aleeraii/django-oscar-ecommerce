@@ -1,0 +1,24 @@
+{% load basket_tags %}
+{% load display_tags %}
+{% load i18n %}
+{% load purchase_info_tags %}
+
+{% purchase_info_for_product request product as session %}
+
+{% if not session.availability.is_available_to_buy and session.price.exists %}
+    {% if has_active_alert %}
+        <p>{% trans "You have an active stock alert for this product." %}</p>
+    {% else %}
+        <form id="alert_form" method="post" action="{% url 'customer:alert-create' pk=product.id %}" class="add-to-basket mb-0">
+            {% csrf_token %}
+            <p style="color:gray">{% trans "You can get an email alert when this product is back in stock." %}</p>
+            {% include "oscar/partials/form_fields.html" with form=alert_form %}
+            <button type="submit" class="button-one submit-button mt-15" data-text="notify me" data-loading-text="{% trans 'Submitting...' %}">{% trans "Notify me" %}</button>
+        </form>
+</br>
+    {% endif %}
+{% endif %}
+
+
+
+

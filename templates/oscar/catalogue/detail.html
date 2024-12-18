@@ -1,0 +1,443 @@
+{% extends "oscar/layout.html" %}
+
+{% load history_tags %}
+{% load currency_filters %}
+{% load reviews_tags %}
+{% load product_tags %}
+{% load display_tags %}
+{% load i18n %}
+{% load purchase_info_tags %}
+{% load static %}
+{% load category_tags %}
+{% load image_tags %}
+
+{% block title %}
+    {{ product.get_meta_title }} | {{ block.super }}
+{% endblock %}
+
+{% block description %}
+    {{ product.get_meta_description }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "SINGLE PRODUCT" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                            <li class=""><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                            {% with category=product.get_categories.first %}
+                                {% for c in category.get_ancestors_and_self %}
+                                    <li class=""><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                                {% endfor %}
+                                <li class="" aria-current="page">{{ product.get_title }}</li>
+
+                                {% get_back_button as backbutton %}
+                                    {% if backbutton %}
+                                        <li class="ml-auto">
+                                            <a href="{{ backbutton.url }}">
+                                                <i class="fas fa-arrow-left"></i> {{ backbutton.title }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                            {% endwith %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+
+<!-- PRODUCT-AREA START -->
+<div class="product-area single-pro-area pt-80 pb-80 product-style-2">
+    <div class="container">
+       <div class="row">
+           <div class="col-lg-9">
+                <div class="row shop-list single-pro-info">
+                <!-- Single-product start -->
+                <div class="col-lg-12">
+                    <div class="single-product clearfix">
+                        <!-- Single-pro-slider Big-photo start -->
+                        <div class="single-pro-slider single-big-photo view-lightbox slider-for">
+                            {% with all_images=product.get_all_images %}
+                                {% for image in all_images %}
+                                    <div>
+                                        {% oscar_thumbnail image.original "370x450" upscale=False as thumb %}
+                                        <img src="{{ thumb.url }}" class="img-fluid" alt="{{ product.get_title }}" />
+                                        <a class="view-full-screen" href="{{ thumb.url }}" data-lightbox="roadtrip" data-title="{{ product.title }}">
+                                            <i class="zmdi zmdi-zoom-in"></i>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                        <!-- Single-pro-slider Big-photo end -->
+
+
+                        <div class="product-info">
+                            <div class="fix">
+                                <h4 class="post-title floatleft">{{ product.title }}</h4>
+                            </div>
+
+                             {% if user.is_staff %}
+                                <a class="float-right d-none d-md-block" style="color:#c0a16b" href="{% url 'dashboard:catalogue-product' pk=product.id %}">
+                                    <small><i class="fas fa-pencil-alt"></i> {% trans "Edit this product" %}</small>
+                                </a>
+                            {% endif %}
+
+                            <div class="fix">
+                                {% iffeature "reviews" %}
+                                    {% if product.rating %}
+                                        <span class="pro-rating floatright">
+                                            {% for i in "12345"|slice:":5" %}
+                                                {% if forloop.counter <= product.rating %}
+                                                    <a href="#"><i class="zmdi zmdi-star"></i></a>
+                                                {% else %}
+                                                    <i class="zmdi zmdi-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    {% endif %}
+                                {% endiffeature %}
+                                {% if not product.rating %}
+                                    <span class="pro-rating floatright">
+                                        {% for i in "12345"|slice:":5" %}
+                                            <i class="zmdi zmdi-star"></i>
+                                        {% endfor %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fix mb-20">
+                               <span class="pro-price">
+                                    {% include "oscar/catalogue/partials/stock_record.html" %}
+                               </span>
+                            </div>
+                            <div class="product-description">
+                                <p>{{ product.get_meta_description | truncatewords:100 }}</p>
+                            </div>
+
+
+                            {% if not product.is_parent %}
+                                {% block product_basket_form %}
+                                    {% include "oscar/catalogue/partials/add_to_basket_form.html" %}
+                                {% endblock %}
+                            {% else %}
+                                {% block variants %}
+                                    <h2>{% trans 'Variants:' %}</h2>
+                                    {% for child in product.children.public %}
+                                        {% purchase_info_for_product request child as child_session %}
+                                        {% if child_session.availability.is_available_to_buy %}
+                                            <a href="{{ child.get_absolute_url }}">{{ child.get_title }}</a><br>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endblock %}
+                            {% endif %}
+
+
+<!--                            &lt;!&ndash; color start &ndash;&gt;-->
+<!--                            <div class="color-filter single-pro-color mb-20 clearfix">-->
+<!--                                <ul>-->
+<!--                                    <li><span class="color-title text-capitalize">color</span></li>-->
+<!--                                    <li><a class="active" href="#"><span class="color color-1"></span></a></li>-->
+<!--                                    <li><a href="#"><span class="color color-2"></span></a></li>-->
+<!--                                    <li><a href="#"><span class="color color-7"></span></a></li>-->
+<!--                                    <li><a href="#"><span class="color color-3"></span></a></li>-->
+<!--                                    <li><a href="#"><span class="color color-4"></span></a></li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; color end &ndash;&gt;-->
+
+<!--                            &lt;!&ndash; Size start &ndash;&gt;-->
+<!--                            <div class="size-filter single-pro-size mb-35 clearfix">-->
+<!--                                <ul>-->
+<!--                                    <li><span class="color-title text-capitalize">size</span></li>-->
+<!--                                    <li><a href="#">M</a></li>-->
+<!--                                    <li><a class="active" href="#">S</a></li>-->
+<!--                                    <li><a href="#">L</a></li>-->
+<!--                                    <li><a href="#">SL</a></li>-->
+<!--                                    <li><a href="#">XL</a></li>-->
+<!--                                </ul>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; Size end &ndash;&gt;-->
+
+
+                            {% include "oscar/catalogue/partials/product_cart_view.html" %}
+
+
+                            <!-- Single-pro-slider Small-photo start -->
+                            <div class="single-pro-slider single-sml-photo slider-nav">
+                                {% with all_images=product.get_all_images %}
+                                    {% for image in all_images %}
+                                      <div>
+                                        {% oscar_thumbnail image.original "70x83" upscale=False as thumb %}
+                                        <img src="{{ thumb.url }}" class="img-fluid" alt="{{ product.get_title }}" />
+                                      </div>
+                                    {% endfor %}
+                                {% endwith %}
+                            </div>
+                            <!-- Single-pro-slider Small-photo end -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Single-product end -->
+                </div>
+                <!-- single-product-tab start -->
+                <div class="single-pro-tab">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="single-pro-tab-menu">
+                                <!-- Nav tabs -->
+                                <ul class="nav d-block">
+                                    <li><a href="#description" data-bs-toggle="tab">Description</a></li>
+                                    <li><a class="active" href="#reviews"  data-bs-toggle="tab">Reviews</a></li>
+                                    <li><a href="#information" data-bs-toggle="tab">Information</a></li>
+<!--                                    <li><a href="#tags" data-bs-toggle="tab">Tags</a></li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane" id="description">
+                                    <div class="pro-tab-info pro-description">
+                                        <h3 class="tab-title title-border mb-30">{{product.title}}</h3>
+                                       <p>{{product.get_meta_description}}</p>
+                                    </div>
+                                </div>
+                                <div class="tab-pane active" id="reviews">
+                                    <div class="pro-tab-info pro-reviews">
+                                        <div class="customer-review mb-60">
+                                            <h3 class="tab-title title-border mb-30">{% trans "Customer Reviews" %}</h3>
+
+                                            {% if product|is_review_permitted:user %}
+                                                   <div class="floatright"> <a id="write_review" href="{% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id %}#addreview" data-text="Write a review" class="button-one submit-button mt-15">
+                                                        {% trans "Write a review" %}
+                                                    </a>
+                                            </div>
+                                            </br></br></br>
+                                            {% endif %}
+
+                                            <ul class="product-comments clearfix">
+                                                {% if product.num_approved_reviews > 0 %}
+                                                    {% for review in product.reviews.approved.all|slice:":5" %}
+                                                        <li class="mb-30">
+                                                            <div class="pro-reviewer">
+                                                                <!-- Display Reviewer's Avatar -->
+                                                                <img src="{% static 'oscar/img/reviewer/person_icon.jpg' %}" alt="{{ review.user.get_full_name }}" />
+                                                            </div>
+                                                            <div class="pro-reviewer-comment">
+                                                                <div class="fix">
+                                                                        <div class="floatleft mbl-center">
+                                                                        <h5 class="text-uppercase mb-0"><strong>{{review.user.first_name}}</strong></h5>
+                                                                        <p class="reply-date">{{review.date_created}}</p>
+                                                                        </div>
+                                                                    <div class="comment-reply floatright">
+<!--                                                                        <a href="#"><i class="zmdi zmdi-mail-reply"></i></a>-->
+                                                                        <a style="background:white"></a>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Display Review Text -->
+                                                                <p class="mb-0">{{ review.body }}</p>
+                                                            </div>
+                                                        </li>
+                                                    {% endfor %}
+                                                      {% if not user.is_authenticated %}
+                                                        {% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id as add_review_url %}
+                                                            <a href="{{ add_review_url }}#addreview" style="color:#c0a16b">Leave review without login</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </ul>
+
+                                            {% if product.num_approved_reviews > 5 %}
+<!--                                                <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}" class="btn float-right">{% trans "See all reviews" %}</a>-->
+                                            {% endif %}
+                                        </div>
+                                         {% block product_review %}
+                                         {% if product.num_approved_reviews == 0 %}
+                                                <p>
+                                                    {% if product|is_review_permitted:user %}
+                                                        {% url 'catalogue:reviews-add' product_slug=product.slug product_pk=product.id as add_review_url %}
+                                                            {% blocktrans %}This product does not have any reviews yet
+<!--                                                            <a href="{{ add_review_url }}#addreview" style="color:#c0a16b">be the first to write one</a>.-->
+                                                        {% endblocktrans %}
+                                                    {% else %}
+                                                        {% trans "This product does not have any reviews yet" %}.
+                                                    {% endif %}
+                                                </p>
+                                        {% endif %}
+                                        {% endblock %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="information">
+                                    <div class="pro-tab-info pro-information">
+                                        <h3 class="tab-title title-border mb-30">Product information</h3>
+                                        <table class="table table-striped">
+                                            {% if product.upc %}
+                                            <tr>
+                                                <th>{% trans "UPC" %}</th><td>{{ product.upc }}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <th>{% trans "Product Type" %}</th><td>{{ product.get_product_class.name }}</td>
+                                            </tr>
+
+                                            {% purchase_info_for_product request product as session %}
+                                            {% if session.price.exists %}
+                                                <tr>
+                                                    <th>{% trans "Price (excl. tax)" %}</th><td>{{ session.price.excl_tax|currency:session.price.currency }}</td>
+                                                </tr>
+                                                {% if session.price.is_tax_known %}
+                                                    <tr>
+                                                        <th>{% trans "Price (incl. tax)" %}</th><td>{{ session.price.incl_tax|currency:session.price.currency }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>{% trans "Tax" %}</th><td>{{ session.price.tax|currency:session.price.currency }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr>
+                                                    <th>{% trans "Availability" %}</th>
+                                                    <td>{{ session.availability.message }}</td>
+                                                </tr>
+                                            {% endif %}
+                                            {% for av in product.get_attribute_values %}
+                                                <tr>
+                                                    <th>{{ av.attribute.name }}</th>
+                                                    <td>{{ av.value_as_html }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% iffeature "reviews" %}
+                                                <tr>
+                                                    <th>{% trans "Number of reviews" %}</th>
+                                                    <td>{{ product.num_approved_reviews }}</td>
+                                                </tr>
+                                            {% endiffeature %}
+                                        </table>
+                                       </div>
+                                </div>
+<!--                                <div class="tab-pane" id="tags">-->
+<!--                                    <div class="pro-tab-info pro-information">-->
+<!--                                        <h3 class="tab-title title-border mb-30">tags</h3>-->
+<!--                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer accumsan egestas elese ifend. Phasellus a felis at est bibendum feugiat ut eget eni Praesent et messages in con sectetur posuere dolor non.</p>-->
+<!--                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer accumsan egestas elese ifend. Phasellus a felis at est bibendum feugiat ut eget eni Praesent et messages in con sectetur posuere dolor non.</p>-->
+<!--                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer accumsan egestas elese ifend. Phasellus a felis at est bibendum feugiat ut eget eni Praesent et messages in con sectetur posuere dolor non.</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- single-product-tab end -->
+           </div>
+           <div class="col-lg-3 mt-tab-30">
+            <!-- Widget-Search start -->
+            <aside class="widget widget-search mb-30">
+                   <form method="get" action="{% url 'search:search' %}">
+                        <input type="text" name="q" placeholder="Search here..." required />
+                            <button type="submit">
+                                <i class="zmdi zmdi-search"></i>
+                            </button>
+                    </form>
+                </aside>
+             <!-- Widget-Search end -->
+
+<!--            &lt;!&ndash; Widget-Categories start &ndash;&gt;-->
+<!--            <aside class="widget widget-categories mb-30">-->
+<!--                <div class="widget-title">-->
+<!--                    <h4>{% trans "Categories" %}</h4>-->
+<!--                </div>-->
+<!--                <div id="cat-treeview" class="widget-info product-cat boxscrol2">-->
+<!--                    <ul>-->
+<!--                        {% category_tree as tree_categories %}-->
+<!--                        {% if tree_categories %}-->
+<!--                            {% for tree_category in tree_categories %}-->
+<!--                            <li class="mt-2">-->
+<!--                                <a href="{{ tree_category.url }}">-->
+<!--                                    {% if tree_category.pk == category.pk %}-->
+<!--                                        <strong>{{ tree_category.name }}</strong>-->
+<!--                                    {% else %}-->
+<!--                                        {{ tree_category.name }}-->
+<!--                                    {% endif %}-->
+<!--                                </a>-->
+<!--                                {% if tree_category.has_children %}<ul>{% else %}</li>{% endif %}-->
+<!--                                {% for n in tree_category.num_to_close %}-->
+<!--                                    </ul></li>-->
+<!--                                {% endfor %}-->
+<!--                        {% endfor %}-->
+
+<!--                        {% else %}-->
+<!--                            <li>{% trans "No categories available." %}</li>-->
+<!--                        {% endif %}-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </aside>-->
+<!--            &lt;!&ndash; Widget-Categories end &ndash;&gt;-->
+
+            <!-- Widget-recommended-product start -->
+             {% with recommended_products=product.sorted_recommended_products|slice:":4" %}
+                {% if recommended_products %}
+                   <aside class="widget widget-product mb-30">
+                        <div class="widget-title">
+                            <h4>Recommended items</h4>
+                        </div>
+                        <div class="widget-info sidebar-product clearfix">
+                                <ul class="row list-unstyled mx-0">
+                                    {% for product in recommended_products %}
+                                   <!-- Single-product start -->
+                                    <div class="single-product">
+                                        <div class="product-img">
+                                             {% with image=product.primary_image %}
+                                                {% oscar_thumbnail image.original "270x270" upscale=False as thumb %}
+                                                <a href="{{ product.get_absolute_url }}">
+                                                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                                                </a>
+                                            {% endwith %}
+                                        </div>
+                                        <div class="product-info">
+                                             <a href="{{ product.get_absolute_url }}">
+                                                <h4 class="post-title">
+                                                    {{ product.title }}
+                                                </h4>
+                                             </a>
+                                            {% include "oscar/catalogue/partials/stock_record.html" %}
+                                        </div>
+                                    </div>
+                                    <!-- Single-product end -->
+                                    {% endfor %}
+                                </ul>
+                        </div>
+                   </aside>
+                {% endif %}
+            {% endwith %}
+            <!-- Widget-recommended-product end -->
+
+             <!-- Widget-recent-product start -->
+            {% recently_viewed_products current_product=product %}
+            <!-- Widget-recent-product end -->
+
+<!--            &lt;!&ndash; Widget-banner start &ndash;&gt;-->
+<!--            <aside class="widget widget-banner">-->
+<!--                <div class="widget-info widget-banner-img">-->
+<!--                    <a href="#"><img src="{% static 'oscar/img/banner/5.jpg' %}" alt="" /></a>-->
+<!--                </div>-->
+<!--            </aside>-->
+<!--            &lt;!&ndash; Widget-banner end &ndash;&gt;-->
+        </div>
+       </div>
+    </div>
+</div>
+
+<!-- PRODUCT-AREA END -->
+{% endblock content %}

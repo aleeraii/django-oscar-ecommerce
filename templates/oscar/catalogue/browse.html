@@ -1,0 +1,237 @@
+{% extends "oscar/layout_2_col.html" %}
+
+{% load basket_tags %}
+{% load category_tags %}
+{% load product_tags %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+    {% if summary %}{{ summary }} |{% endif %} {{ block.super }}
+{% endblock %}
+
+{% block headertext %}
+<!--{ summary }}-->
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "All Products" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                            <li><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                            <li>{% block breadcrumb_summary %}{{ summary }}{% endblock breadcrumb_summary %}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
+
+
+{% block column_left %}
+
+<div class="row">
+    <!-- Left Sidebar -->
+    <div class="">
+    <!-- Widget-Search start -->
+    <aside class="widget widget-search mb-30">
+           <form method="get" action="{% url 'search:search' %}">
+                <input type="text" name="q" placeholder="Search here..." required />
+                    <button type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+            </form>
+        </aside>
+
+    <!-- Widget-Categories start -->
+    <aside class="widget widget-categories mb-30">
+        <div class="widget-title">
+            <h4>{% trans "Categories" %}</h4>
+        </div>
+        <div id="cat-treeview" class="widget-info product-cat boxscrol2">
+            <ul>
+                {% category_tree as tree_categories %}
+                {% if tree_categories %}
+                    {% for tree_category in tree_categories %}
+                    <li class="mt-2">
+                        <span>
+                            {% if tree_category.pk == category.pk %}
+                                {% if tree_category.has_children %}
+                                   {{ tree_category.name }}
+                                 {% else %}
+                                  <strong><a href="{{ tree_category.url }}">{{ tree_category.name }}</a></strong>
+                                {% endif %}
+                            {% else %}
+                                 {% if tree_category.has_children %}
+                                    {{ tree_category.name }}
+                                 {% else %}
+                                    <a href="{{ tree_category.url }}">{{ tree_category.name }}</a>
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                        {% if tree_category.has_children %}<ul>{% else %}{% endif %}
+                        {% for n in tree_category.num_to_close %}
+                            </ul>
+                        {% endfor %}
+                    </li>
+                    {% endfor %}
+
+                {% else %}
+                    <li>{% trans "No categories available." %}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+    <!-- Widget-Categories end -->
+
+<!--    &lt;!&ndash; Shop-Filter start &ndash;&gt;-->
+<!--    <aside class="widget shop-filter mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Price" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info">-->
+<!--            <div class="price_filter">-->
+<!--                <div class="price_slider_amount">-->
+<!--                    <input type="submit" value="Your range:" />-->
+<!--                    <input type="text" id="amount" name="price" placeholder="Add Your Price" />-->
+<!--                </div>-->
+<!--                <div id="slider-range"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Shop-Filter end &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Widget-Color start &ndash;&gt;-->
+<!--    <aside class="widget widget-color mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Color" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info color-filter clearfix">-->
+<!--            <ul>-->
+<!--                <li><a href="#"><span class="color color-1"></span>LightSalmon<span class="count">12</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-2"></span>Dark Salmon<span class="count">20</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-3"></span>Tomato<span class="count">59</span></a></li>-->
+<!--                <li><a class="active" href="#"><span class="color color-4"></span>Deep Sky Blue<span class="count">45</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-5"></span>Electric Purple<span class="count">78</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-6"></span>Atlantis<span class="count">10</span></a></li>-->
+<!--                <li><a href="#"><span class="color color-7"></span>Deep Lilac<span class="count">15</span></a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Widget-Color end &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Widget-Size start &ndash;&gt;-->
+<!--    <aside class="widget widget-size mb-30">-->
+<!--        <div class="widget-title">-->
+<!--            <h4>{% trans "Size" %}</h4>-->
+<!--        </div>-->
+<!--        <div class="widget-info size-filter clearfix">-->
+<!--            <ul>-->
+<!--                <li><a href="#">M</a></li>-->
+<!--                <li><a class="active" href="#">S</a></li>-->
+<!--                <li><a href="#">L</a></li>-->
+<!--                <li><a href="#">SL</a></li>-->
+<!--                <li><a href="#">XL</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </aside>-->
+<!--    &lt;!&ndash; Widget-Size end &ndash;&gt;-->
+</div>
+<!-- End of Left Sidebar -->
+</div>
+{% endblock %}
+
+
+{% block content %}
+<!-- Shop-Content Start  Grid View-->
+<div class="tab-content">
+    <div class="shop-content mt-tab-30 mb-30 mb-lg-0">
+        <div class="product-option mb-30 clearfix">
+            <!-- Nav tabs -->
+            <ul class="nav d-block shop-tab">
+                <li>
+                    <a class="active" href="#grid-view" data-bs-toggle="tab">
+                        <i class="zmdi zmdi-view-module"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#list-view" data-bs-toggle="tab">
+                        <i class="zmdi zmdi-view-list"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="showing text-end d-none d-md-block">
+                {% if products %}
+                    <p class="mb-0">
+                        {% trans "Showing" %}
+                        {{ page_obj.start_index }}-{{ page_obj.end_index }}
+                        {% trans "of" %}
+                        {{ paginator.count }}
+                        {% trans "Results" %}
+                    </p>
+                {% else %}
+                    <p class="mb-0">{% trans "No results found." %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Grid View -->
+            <div class="tab-pane active" id="grid-view">
+                <div class="row">
+                    {% if products %}
+                        <section>
+                            <div>
+                                <ol class="row list-unstyled">
+                                    {% for product in products %}
+                                        {% include "oscar/catalogue/partials/product_grid.html" with product=product %}
+                                    {% endfor %}
+                                </ol>
+                                {% include "oscar/partials/pagination.html" %}
+                            </div>
+                        </section>
+                    {% else %}
+                        <p class="nonefound">{% trans "No products found." %}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div class="tab-pane" id="list-view">
+                <div class="row shop-list">
+                    {% if products %}
+                        <section>
+                            <div>
+                                <ol class="row list-unstyled">
+                                    {% for product in products %}
+                                        {% render_product product %}
+                                    {% endfor %}
+                                </ol>
+                                {% include "oscar/partials/pagination.html" %}
+                            </div>
+                        </section>
+                    {% else %}
+                        <p class="nonefound">{% trans "No products found." %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block onbodyload %}
+    {{ block.super }}
+    oscar.search.init();
+{% endblock %}
+

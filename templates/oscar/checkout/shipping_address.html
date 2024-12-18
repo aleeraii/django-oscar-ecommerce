@@ -1,0 +1,153 @@
+{% extends "oscar/checkout/checkout.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Shipping address" %} | {{ block.super }}
+{% endblock %}
+
+{% block checkout_nav %}
+    {% include 'oscar/checkout/nav.html' with step=1 %}
+{% endblock %}
+
+
+{% block order_contents %}{% endblock %}
+
+{% block shipping_address %}
+<div class="">
+    <div class="">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shopping-cart">
+                    <div class="shop-cart-table check-out-wrap">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="billing-details pr-20">
+                                    <h4 class="title-1 title-border text-uppercase mb-30">An address from your address book?</h4>
+                                    {% if user.is_authenticated %}
+                                        {% if addresses %}
+                                            <div class="row">
+                                                {% for address in addresses %}
+                                                    {% if forloop.counter <= 3 %}
+                                                        <div>
+                                                            <address>
+                                                                {% for field in address.active_address_fields %}
+                                                                    {% if forloop.first %}
+                                                                        <b>{{ field }}</b><br/>
+                                                                    {% else %}
+                                                                        {{ field }}<br/>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </address>
+                                                            <form action="{% url 'checkout:shipping-address' %}" method="post" id="select_shipping_address_{{ address.id }}" class="mb-0" onsubmit="return false;">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="action" value="ship_to" />
+                                                                <input type="hidden" name="address_id" value="{{ address.id }}" />
+
+                                                                {% if address.is_default_for_shipping %}
+                                                                    <button type="button" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
+                                                                        <i class="fas fa-check-circle"></i> {% trans "Ship to your default shipping address" %}
+                                                                    </button>
+                                                                {% else %}
+                                                                  <a type="button" data-text="Ship to this address" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
+                                                                    {% trans "Ship to this address" %}
+                                                                  </a>
+                                                                {% endif %}
+                                                                  <a href="{% url 'checkout:user-address-update' pk=address.id %}" data-text="edit address" style="background: #6c757d" class="button-one submit-button mt-15">{% trans "Edit address" %}</a>
+                                                                  <a href="{% url 'checkout:user-address-delete' pk=address.id %}" data-text="delete" style="background: #dc3545" class="button-one submit-button mt-15">{% trans "Delete" %}
+                                                                </a>
+                                                            </form>
+                                                            </br>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if forloop.counter|divisibleby:2 %}
+                                                        </div><div class="row">
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% block new_address_form %}
+                            <div class="col-md-6 mt-xs-30">
+                                <div class="billing-details pl-20">
+                                    <h4 class="title-1 title-border text-uppercase mb-30">Ship to a different address</h4>
+                                    <form action="{% url 'checkout:shipping-address' %}" method="post" id="new_shipping_address">
+                                        {% csrf_token %}
+
+                                        <div class="form-group">
+                                            <label for="id_first_name"></label>
+                                            <input type="text" class="text-gray" name="first_name" maxlength="255" placeholder="{% trans 'First name' %}" required id="id_first_name">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_last_name"></label>
+                                            <input type="text" class="text-gray" name="last_name" maxlength="255" placeholder="{% trans 'Last name' %}" required id="id_last_name">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_line1"></label>
+                                            <input type="text" class="text-gray" name="line1" maxlength="255" placeholder="{% trans 'Address' %}" required id="id_line1">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_line4"></label>
+                                            <input type="text" class="text-gray" name="line4" maxlength="255" placeholder="{% trans 'City' %}" required id="id_line4">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_state"></label>
+                                            <input type="text" class="text-gray" name="state" maxlength="255" placeholder="{% trans 'State/Country' %}" id="id_state">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_postcode"></label>
+                                            <input type="text" class="text-gray" name="postcode" maxlength="64" placeholder="{% trans 'Post/Zip code' %}" required id="id_postcode">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_phone_number"></label>
+                                            <input type="text" class="text-gray" name="phone_number" maxlength="128" placeholder="{% trans 'Phone number' %}" id="id_phone_number">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_notes"></label>
+                                            <textarea name="notes" class="custom-textarea" cols="40" rows="10" placeholder="{% trans 'Any instructions' %}" id="id_notes"></textarea>
+                                        </div>
+
+                                        <button type="submit" class="button-one submit-button mt-15" data-text="save and continue" data-loading-text="{% trans 'Continuing...' %}">{% trans "Save and Continue" %}</button>
+                                        {% trans "OR" %} <a style="color: #c0a16b" href="{% url 'basket:summary' %}">{% trans "Return to Cart" %}</a>
+                                    </form>
+                                </div>
+                            </div>
+                           {% endblock new_address_form %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function fillFormWithAddress(addressId, firstName, lastName, line1, line4, state, postcode, phoneNumber, notes) {
+        // Populate the fields in the form with the selected address data
+        document.getElementById('id_first_name').value = firstName;
+        document.getElementById('id_last_name').value = lastName;
+        document.getElementById('id_line1').value = line1;
+        document.getElementById('id_line4').value = line4;
+        document.getElementById('id_state').value = state;
+        document.getElementById('id_postcode').value = postcode;
+        document.getElementById('id_phone_number').value = phoneNumber;
+        document.getElementById('id_notes').value = notes;
+
+        // Optionally, change the submit button text to "Save and Continue"
+        document.querySelector('.submit-button').textContent = "{% trans 'Save and Continue' %}";
+    }
+</script>
+{% endblock shipping_address %}
+
+{% block shipping_method %}{% endblock %}
+{% block payment_method %}{% endblock %}

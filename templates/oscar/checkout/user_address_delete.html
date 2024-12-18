@@ -1,0 +1,31 @@
+{% extends "oscar/checkout/checkout.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Delete address?" %} | {{ block.super }}
+{% endblock title %}
+
+{% block order_contents %}{% endblock %}
+{% block shipping_method %}{% endblock %}
+{% block payment_method %}{% endblock %}
+{% block payment_details %}{% endblock %}
+
+{% block checkout_nav %}
+    {% include 'oscar/checkout/nav.html' with step=1 %}
+{% endblock %}
+
+
+{% block shipping_address %}
+    <form method="post" id="delete_address_{{ object.id }}">
+        {% csrf_token %}
+        <div class="">
+            <address>
+                {% for field in object.active_address_fields %}
+                    {{ field }}<br/>
+                {% endfor %}
+            </address>
+        </div>
+        <p>{% trans "Are you sure you want to delete this address?" %} <button type="submit" data-text="yes !" class="button-one submit-button mt-15" data-loading-text="{% trans 'Submitting...' %}">{% trans "Yes !" %}</button>
+            {% trans "OR" %} <a style="color: #c0a16b" href="{% url 'checkout:shipping-address' %}">{% trans "Cancel" %}</a>.</p>
+    </form>
+{% endblock shipping_address %}

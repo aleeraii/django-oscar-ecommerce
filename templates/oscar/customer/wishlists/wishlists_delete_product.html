@@ -1,0 +1,65 @@
+{% extends "oscar/customer/baseaccountpage.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="heading-banner-area overlay-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading-banner">
+                    <div class="heading-banner-title">
+                        <h2>{% block heading_title %}{% trans "Wishlist" %}{% endblock heading_title %}</h2>
+                    </div>
+                    <div class="breadcumbs pb-15">
+                        <ul>
+                             <li>
+                                <a href="{{ homepage_url }}">{% trans 'Home' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'customer:summary' %}">{% trans 'Account' %}</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'customer:wishlists-list' %}">{% trans 'Wish Lists' %}</a>
+                            </li>
+                            <li>
+<!--                                <a href="{% url 'customer:wishlists-detail' key=wishlist.key %}">{{ wishlist.name }}</a>-->
+                                <a href="{% url 'customer:wishlists-detail' key=wishlist.key %}">My Wishlist</a>
+                            </li>
+                            <li class="breadcrumb-item " aria-current="page">{% trans "Remove product" %}</li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock breadcrumbs %}
+
+{% block tabcontent %}
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="customer-login text-left">
+                    <h4 class="title-1 title-border text-uppercase mb-30">
+                      {{ object.get_title }}
+                    </h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p class="text-gray">
+                            {% blocktrans with product_name=object.get_title wishlist_name=wishlist.name %}
+                                Are you sure you want to delete {{ product_name }} from wish list {{ wishlist_name }}?
+                            {% endblocktrans %}
+                        </p>
+                        <div class="form-group">
+                            <button type="submit" data-text="remove" class="button-one submit-button mt-15" data-loading-text="{% trans 'Removing...' %}">{% trans 'Remove' %}</button> {% trans 'OR' %} <a style="color: #c0a16b" href="{{ wishlist.get_absolute_url }}">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock tabcontent %}

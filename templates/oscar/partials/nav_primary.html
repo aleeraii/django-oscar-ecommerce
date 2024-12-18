@@ -1,0 +1,208 @@
+{% load currency_filters %}
+{% load category_tags %}
+{% load image_tags %}
+{% load i18n %}
+{% load static %}
+
+<!-- Wrapper for the header -->
+<div class="wrapper bg-dark-white">
+    <!-- HEADER-AREA START -->
+    <header id="sticky-menu" class="header header-2">
+        <div class="header-area">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Logo section -->
+                    <div class="col-md-4 offset-md-4 col-7">
+                        <div class="logo text-md-center">
+                            <a href="{% url 'catalogue:index' %}">
+                                <img src="{% static 'oscar/img/logo/logo.svg' %}" alt="Logo" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Cart section-->
+                    <div class="col-md-3 col-3">
+                        <div class="mini-cart text-end">
+                            <ul>
+                                <li>
+                                    <a class="cart-icon" href="{% url 'basket:summary' %}">
+                                        <i style="font-size: 26px" class="zmdi zmdi-shopping-cart"></i>
+                                        <span>{% if not request.basket.is_empty %}{{ request.basket.num_items }}{% else %}0{% endif %}</span>
+                                    </a>
+                                    <div class="mini-cart-brief text-left">
+                                        <div class="cart-items">
+                                            <p class="mb-0">You have <span>{{ request.basket.num_items }} items</span> in your shopping bag</p>
+                                        </div>
+                                        <div class="all-cart-product clearfix">
+                                            {% for line in request.basket.all_lines %}
+                                                <div class="single-cart clearfix">
+                                                    <div class="cart-photo">
+                                                        {% with image=line.product.primary_image %}
+                                                            {% oscar_thumbnail image.original "100x100" upscale=False as thumb %}
+                                                            <a href="{{ line.product.get_absolute_url }}">
+                                                                <img src="{{ thumb.url }}" alt="{{ line.product.get_title }}">
+                                                            </a>
+                                                        {% endwith %}
+                                                    </div>
+                                                    <div class="cart-info">
+                                                        <h5><a href="#">{{ line.product.title|truncatewords:3 }}</a></h5>
+<!--                                                        <p class="mb-0">Price: {{ line.line_price|currency:request.basket.currency }}</p>-->
+                                                        <p class="mb-0">Price: {% include 'oscar/catalogue/partials/quick_basket_price.html' with product=line.product%}</p>
+                                                        <p class="mb-0">Qty: {{ line.quantity }}</p>
+<!--                                                        <span class="cart-delete"><a href="#"><i class="zmdi zmdi-close"></i></a></span>-->
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="cart-totals">
+                                            <h5 class="mb-0">
+                                              Total <span class="floatright ms-2">
+                                                {{ request.basket.total_incl_tax|currency:request.basket.currency }}
+                                              </span>
+                                            </h5>
+                                        </div>
+                                        <div class="cart-bottom clearfix">
+                                            <a href="{% url 'basket:summary' %}" class="button-one floatleft text-uppercase" data-text="View cart">View cart</a>
+                                            <a href="{% url 'checkout:index' %}" class="button-one floatright text-uppercase" data-text="Check out">Check out</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                     <div class="col-md-1 col-1">
+                         <a class="cart-icon" href="{% url 'customer:summary' %}">
+                             <i style="font-size: 30px" class="zmdi zmdi-account"></i>
+                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN-MENU START -->
+        <div class="menu-toggle menu-toggle-2 hamburger hamburger--emphatic d-none d-md-block">
+            <div class="hamburger-box">
+                <div class="hamburger-inner"></div>
+            </div>
+        </div>
+
+        <div class="main-menu d-none d-md-block">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'catalogue:index' %}">Home</a>
+                    </li>
+                    <li><a href="#">Products</a>
+                        <div class="mega-menu menu-scroll">
+                            <div class="table">
+                                <div class="">
+                                    <div class="half-width">
+                                    <!-- Widget-Categories start -->
+                                       <aside class="widget widget-categories mb-30">
+        <div class="widget-title">
+            <h4>{% trans "Categories" %}</h4>
+        </div>
+        <div id="cat-treeview" class="widget-info product-cat boxscrol2">
+            <ul>
+                {% category_tree as tree_categories %}
+                {% if tree_categories %}
+                    {% for tree_category in tree_categories %}
+                    <li class="mt-2">
+                        <span>
+                            {% if tree_category.pk == category.pk %}
+                                {% if tree_category.has_children %}
+                                   {{ tree_category.name }}
+                                 {% else %}
+                                  <strong><a href="{{ tree_category.url }}">{{ tree_category.name }}</a></strong>
+                                {% endif %}
+                            {% else %}
+                                 {% if tree_category.has_children %}
+                                    {{ tree_category.name }}
+                                 {% else %}
+                                    <a href="{{ tree_category.url }}">{{ tree_category.name }}</a>
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                        {% if tree_category.has_children %}<ul>{% else %}{% endif %}
+                        {% for n in tree_category.num_to_close %}
+                            </ul>
+                        {% endfor %}
+                    </li>
+                    {% endfor %}
+
+                {% else %}
+                    <li>{% trans "No categories available." %}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+                                    <!-- Widget-Categories end -->
+                                    </div>
+
+                                    <div class="pb-80"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li><a href="#">Pages</a>
+                        <div class="sub-menu menu-scroll">
+                            <ul>
+                            <li class="menu-title">Page's</li>
+                                <li><a href="{% url 'catalogue:index' %}">Shop</a></li>
+                                <li><a href="{% url 'basket:summary' %}">Shopping Cart</a></li>
+                                <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
+                                <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
+                                <li><a href="{% url 'customer:order-list' %}">Order</a></li>
+                                {% if user.is_authenticated %}
+                                <li><a href="{% url 'customer:logout' %}">logout</a></li>
+                                {% else %}
+                                <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'customer:summary' %}">My Account</a></li>
+                            </ul>
+                            <li><a href="#">about us</a></li>
+							<li><a href="#">contact</a></li>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <!-- Mobile-menu start -->
+    <div class="mobile-menu-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 d-block d-md-none">
+                    <div class="mobile-menu">
+                        <nav id="dropdown">
+                            <ul>
+                                <li><a href="{% url 'catalogue:index' %}">home</a>
+                                </li>
+                                <li><a href="{% url 'catalogue:index' %}">products</a></li>
+                                <li><a href="#">pages</a>
+                                    <ul>
+                                        <li><a href="{% url 'catalogue:index' %}">Shop</a></li>
+                                        <li><a href="{% url 'basket:summary' %}">Shopping Cart</a></li>
+                                        <li><a href="{% url 'customer:wishlists-list' %}">Wishlist</a></li>
+                                        <li><a href="{% url 'checkout:index' %}">Checkout</a></li>
+                                        <li><a href="{% url 'customer:order-list' %}">Order</a></li>
+                                        {% if user.is_authenticated %}
+                                        <li><a href="{% url 'customer:logout' %}">logout</a></li>
+                                        {% else %}
+                                        <li><a href="{% url 'customer:login' %}">login / Registration</a></li>
+                                        {% endif %}
+                                        <li><a href="{% url 'customer:summary' %}">My Account</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">about us</a></li>
+                                <li><a href="#">contact</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile-menu end -->
+</div>

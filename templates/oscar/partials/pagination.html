@@ -1,0 +1,54 @@
+{% load display_tags %}
+{% load i18n %}
+
+{% if paginator.num_pages > 1 %}
+    <!-- Pagination start -->
+    <div class="shop-pagination text-center">
+        <div class="pagination">
+            <ul>
+                <!-- Previous Page Link -->
+                {% if page_obj.has_previous %}
+                    <li>
+                        <a href="?{% get_parameters 'page' %}page={{ page_obj.previous_page_number }}">
+                            <i class="zmdi zmdi-long-arrow-left"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a>
+                            <i class="zmdi zmdi-long-arrow-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                <!-- Page Numbers -->
+                {% for page_num in paginator.page_range %}
+                    {% if page_num == page_obj.number %}
+                        <li><a class="active" href="#">{{ page_num }}</a></li>
+                    {% else %}
+                        <li>
+                            <a href="?{% get_parameters 'page' %}page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Next Page Link -->
+                {% if page_obj.has_next %}
+                    <li>
+                        <a href="?{% get_parameters 'page' %}page={{ page_obj.next_page_number }}">
+                            <i class="zmdi zmdi-long-arrow-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a>
+                            <i class="zmdi zmdi-long-arrow-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <!-- Pagination end -->
+{% endif %}
+

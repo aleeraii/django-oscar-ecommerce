@@ -1,0 +1,75 @@
+{% load i18n %}
+{% load wishlist_tags %}
+
+{% if user.is_authenticated %}
+    {% with wishlists=user.wishlists.all %}
+        {% wishlists_containing_product wishlists product as product_wishlists %}
+        {% if wishlists %}
+            <div class="dropdown">
+                <a href="#" class="wishlist-icon" data-bs-toggle="dropdown" title="{% trans 'Add to wish list' %}">
+                    <i class="zmdi {% if product_wishlists %}zmdi-favorite{% else %}zmdi-favorite-outline{% endif %}" style="{% if product_wishlists %}color: #c0a16b;{% endif %}"></i>
+                </a>
+                <span class="dropdown-menu custom-dropdown-menu">
+                    {% for wishlist in wishlists %}
+                        {% if wishlist not in product_wishlists %}
+                            <form method="POST" action="{% url 'customer:wishlists-add-product' key=wishlist.key product_pk=product.pk %}" class="dropdown-item" style="color:#c0a16b">
+                                {% csrf_token %}
+                                <div class="">
+                                        <button type="submit" style="color:#c0a16b">{% trans 'Add to Wish List' %}</button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <div class="custom-dropdown-item">
+                                <form method="post" action="{% url 'customer:wishlists-remove-product' key=wishlist.key product_pk=product.pk %}">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <button type="submit" style="color:#c0a16b">{% trans 'Remove' %}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+        {% else %}
+            <a href="{% url 'customer:wishlists-add-product' product_pk=product.pk %}" class="wishlist-icon" title="{% trans 'Add to wish list' %}">
+                <i class="zmdi zmdi-favorite-outline"></i>
+            </a>
+        {% endif %}
+    {% endwith %}
+{% else %}
+    <a href="#" class="wishlist-icon disabled" title="{% trans 'Please login to add products to a wish list.' %}">
+        <i class="zmdi zmdi-favorite-outline"></i>
+    </a>
+{% endif %}
+<style>
+    /* Style the entire dropdown menu */
+.custom-dropdown-menu {
+    border: 2px solid #c0a16b;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --bs-dropdown-link-active-bg:none;
+}
+
+.dropdown-item:hover{
+    background-color: white;
+}
+
+/* Style each dropdown item */
+.custom-dropdown-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-dropdown-item:last-child {
+    border-bottom: none; /* Remove bottom border on the last item */
+}
+
+/* Style the links inside the dropdown items */
+.custom-dropdown-item a {
+    color: #333; /* Set text color */
+    text-decoration: none; /* Remove underline */
+    font-weight: 500; /* Optional: Add font weight */
+}
+
+</style>
