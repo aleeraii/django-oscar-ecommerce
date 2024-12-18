@@ -45,7 +45,7 @@
                                                         {% endwith %}
                                                     </div>
                                                     <div class="cart-info">
-                                                        <h5><a href="#">{{ line.product.title }}</a></h5>
+                                                        <h5><a href="#">{{ line.product.title|truncatewords:3 }}</a></h5>
 <!--                                                        <p class="mb-0">Price: {{ line.line_price|currency:request.basket.currency }}</p>-->
                                                         <p class="mb-0">Price: {% include 'oscar/catalogue/partials/quick_basket_price.html' with product=line.product%}</p>
                                                         <p class="mb-0">Qty: {{ line.quantity }}</p>
@@ -98,34 +98,44 @@
                                 <div class="">
                                     <div class="half-width">
                                     <!-- Widget-Categories start -->
-                                    <aside class="">
-                                        <div class="widget-title">
-                                            <h4>Categories</h4>
-                                        </div>
-                                        <div style="margin-left: 20%">
-                                            <ul>
-                                                {% category_tree as tree_categories %}
-                                                {% if tree_categories %}
-                                                    {% for tree_category in tree_categories %}
-                                                    <li class="mt-2">
-                                                        <a href="{{ tree_category.url }}">
-                                                            {% if tree_category.pk == category.pk %}
-                                                                <strong>{{ tree_category.name }}</strong>
-                                                            {% else %}
-                                                                {{ tree_category.name }}
-                                                            {% endif %}
-                                                        </a>
-                                                        {% if tree_category.has_children %}<ul>{% else %}</li>{% endif %}
-                                                        {% for n in tree_category.num_to_close %}
-                                                            </ul></li>
-                                                        {% endfor %}
-                                                {% endfor %}
+                                       <aside class="widget widget-categories mb-30">
+        <div class="widget-title">
+            <h4>{% trans "Categories" %}</h4>
+        </div>
+        <div id="cat-treeview" class="widget-info product-cat boxscrol2">
+            <ul>
+                {% category_tree as tree_categories %}
+                {% if tree_categories %}
+                    {% for tree_category in tree_categories %}
+                    <li class="mt-2">
+                        <span>
+                            {% if tree_category.pk == category.pk %}
+                                {% if tree_category.has_children %}
+                                   {{ tree_category.name }}
+                                 {% else %}
+                                  <strong><a href="{{ tree_category.url }}">{{ tree_category.name }}</a></strong>
+                                {% endif %}
+                            {% else %}
+                                 {% if tree_category.has_children %}
+                                    {{ tree_category.name }}
+                                 {% else %}
+                                    <a href="{{ tree_category.url }}">{{ tree_category.name }}</a>
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                        {% if tree_category.has_children %}<ul>{% else %}{% endif %}
+                        {% for n in tree_category.num_to_close %}
+                            </ul>
+                        {% endfor %}
+                    </li>
+                    {% endfor %}
 
-                                                {% else %}
-                                                    <li>{% trans "No categories available." %}</li>
-                                                {% endif %}
-                                            </ul>
-                                        </div>
+                {% else %}
+                    <li>{% trans "No categories available." %}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
                                     <!-- Widget-Categories end -->
                                     </div>
 

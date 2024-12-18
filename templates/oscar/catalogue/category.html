@@ -28,15 +28,3 @@
     <li class="" aria-current="page">{{ category.name }}</li>
 {% endblock breadcrumb_summary %}
 
-
-{% block content %}
-    {% if category.description %}
-<!--        <div class="row">-->
-<!--            <div class="col-sm-9"><p>{{ category.description|safe }}</p></div>-->
-<!--            {% if category.image %}-->
-<!--                <div class="col-sm-3"><img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" /></div>-->
-<!--            {% endif %}-->
-<!--        </div>-->
-<!--    {% endif %}-->
-    {{ block.super }}
-{% endblock %}

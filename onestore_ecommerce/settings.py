@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from oscar.defaults import *
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -120,15 +124,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = "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"
+SENDGRID_EMAIL = "ayesha.arshad@codefulcrum.com"
+
+OSCAR_FROM_EMAIL = SENDGRID_EMAIL
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
     }
 }
 
@@ -195,5 +211,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 OSCAR_PRODUCTS_PER_PAGE = 9
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://332c-116-58-44-74.ngrok-free.app',
+    'https://3117-182-187-142-251.ngrok-free.app',
 ]
