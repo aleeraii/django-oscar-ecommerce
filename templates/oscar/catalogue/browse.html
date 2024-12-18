@@ -21,7 +21,7 @@
             <div class="col-md-12">
                 <div class="heading-banner">
                     <div class="heading-banner-title">
-                        <h2>{% block heading_title %}{% trans "Product View" %}{% endblock heading_title %}</h2>
+                        <h2>{% block heading_title %}{% trans "All Products" %}{% endblock heading_title %}</h2>
                     </div>
                     <div class="breadcumbs pb-15">
                         <ul>
@@ -63,18 +63,27 @@
                 {% if tree_categories %}
                     {% for tree_category in tree_categories %}
                     <li class="mt-2">
-                        <a href="{{ tree_category.url }}">
+                        <span>
                             {% if tree_category.pk == category.pk %}
-                                <strong>{{ tree_category.name }}</strong>
+                                {% if tree_category.has_children %}
+                                   {{ tree_category.name }}
+                                 {% else %}
+                                  <strong><a href="{{ tree_category.url }}">{{ tree_category.name }}</a></strong>
+                                {% endif %}
                             {% else %}
-                                {{ tree_category.name }}
+                                 {% if tree_category.has_children %}
+                                    {{ tree_category.name }}
+                                 {% else %}
+                                    <a href="{{ tree_category.url }}">{{ tree_category.name }}</a>
+                                {% endif %}
                             {% endif %}
-                        </a>
-                        {% if tree_category.has_children %}<ul>{% else %}</li>{% endif %}
+                        </span>
+                        {% if tree_category.has_children %}<ul>{% else %}{% endif %}
                         {% for n in tree_category.num_to_close %}
-                            </ul></li>
+                            </ul>
                         {% endfor %}
-                {% endfor %}
+                    </li>
+                    {% endfor %}
 
                 {% else %}
                     <li>{% trans "No categories available." %}</li>
