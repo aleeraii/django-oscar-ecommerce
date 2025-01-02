@@ -126,13 +126,14 @@ WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-#
-# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-# SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
-#
-# OSCAR_FROM_EMAIL = SENDGRID_EMAIL
+
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
+
+OSCAR_FROM_EMAIL = SENDGRID_EMAIL
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -140,9 +141,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
     }
