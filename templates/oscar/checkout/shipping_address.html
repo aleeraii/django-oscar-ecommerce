@@ -44,7 +44,7 @@
                                                                 <input type="hidden" name="address_id" value="{{ address.id }}" />
 
                                                                 {% if address.is_default_for_shipping %}
-                                                                    <button type="button" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
+                                                                    <button type="button" data-text="Ship to your default shipping address" class="button-one submit-button mt-15" onclick="fillFormWithAddress({{ address.id }}, '{{ address.first_name }}', '{{ address.last_name }}', '{{ address.line1 }}', '{{ address.line4 }}', '{{ address.state }}', '{{ address.postcode }}', '{{ address.phone_number }}', '{{ address.notes }}')">
                                                                         <i class="fas fa-check-circle"></i> {% trans "Ship to your default shipping address" %}
                                                                     </button>
                                                                 {% else %}
@@ -142,9 +142,6 @@
         document.getElementById('id_postcode').value = postcode;
         document.getElementById('id_phone_number').value = phoneNumber;
         document.getElementById('id_notes').value = notes;
-
-        // Optionally, change the submit button text to "Save and Continue"
-        document.querySelector('.submit-button').textContent = "{% trans 'Save and Continue' %}";
     }
 </script>
 {% endblock shipping_address %}
