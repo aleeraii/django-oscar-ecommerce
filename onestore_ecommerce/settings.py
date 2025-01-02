@@ -128,7 +128,7 @@ WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
 
@@ -140,9 +140,9 @@ OSCAR_FROM_EMAIL = SENDGRID_EMAIL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
     }
