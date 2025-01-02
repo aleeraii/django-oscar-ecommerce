@@ -124,15 +124,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'onestore_ecommerce.wsgi.application'
 
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
-
-OSCAR_FROM_EMAIL = SENDGRID_EMAIL
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+#
+# EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+# SENDGRID_EMAIL = os.getenv('SENDGRID_EMAIL')
+#
+# OSCAR_FROM_EMAIL = SENDGRID_EMAIL
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -209,6 +209,12 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 OSCAR_PRODUCTS_PER_PAGE = 9
+OSCAR_ORDERS_PER_PAGE = 10
+OSCAR_EMAILS_PER_PAGE = 10
+OSCAR_ADDRESSES_PER_PAGE = 2
+OSCAR_NOTIFICATIONS_PER_PAGE = 3
+OSCAR_STOCK_ALERTS_PER_PAGE = 3
+
 
 CSRF_TRUSTED_ORIGINS = [
     'https://3117-182-187-142-251.ngrok-free.app',

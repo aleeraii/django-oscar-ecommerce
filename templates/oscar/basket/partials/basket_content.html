@@ -80,7 +80,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         <div class="product-info">
-                                                                            <h4 class="post-title"><a class="text-light-black" href="#">{{ line.description|truncatewords:3 }}</a></h4>
+                                                                            <h4 class="post-title"><a class="text-light-black" href="{{ product.get_absolute_url }}">{{ line.description|truncatewords:3 }}</a></h4>
                                                                             <p class="mb-0">{{ session.availability.message }}</p>
                                                                         </div>
                                                                     </td>

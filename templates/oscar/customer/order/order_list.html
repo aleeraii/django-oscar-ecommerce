@@ -5,36 +5,94 @@
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static "oscar/js/bootstrap4-datetimepicker/tempusdominus-bootstrap-4.min.css" %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" />
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
-    <script src="{% static "oscar/js/bootstrap4-datetimepicker/moment-with-locales.min.js" %}"></script>
-    <script src="{% static "oscar/js/bootstrap4-datetimepicker/tempusdominus-bootstrap-4.min.js" %}"></script>
+    <!-- Load jQuery 3.x -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Load Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- Load Tempus Dominus -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Initialize Datepicker -->
+    <script>
+        $(document).ready(function () {
+            $('#wrapper_for_id_date_from').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'far fa-calendar-alt',
+                    up: 'fas fa-arrow-up',
+                    down: 'fas fa-arrow-down',
+                    previous: 'fas fa-chevron-left',
+                    next: 'fas fa-chevron-right',
+                    today: 'fas fa-calendar-check',
+                    clear: 'fas fa-trash',
+                    close: 'fas fa-times'
+                }
+            });
+
+            $('#wrapper_for_id_date_to').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'far fa-calendar-alt',
+                    up: 'fas fa-arrow-up',
+                    down: 'fas fa-arrow-down',
+                    previous: 'fas fa-chevron-left',
+                    next: 'fas fa-chevron-right',
+                    today: 'fas fa-calendar-check',
+                    clear: 'fas fa-trash',
+                    close: 'fas fa-times'
+                }
+            });
+
+            // Link datepickers if needed
+            $("#wrapper_for_id_date_from").on("change.datetimepicker", function (e) {
+                $('#wrapper_for_id_date_to').datetimepicker('minDate', e.date);
+            });
+
+            $("#wrapper_for_id_date_to").on("change.datetimepicker", function (e) {
+                $('#wrapper_for_id_date_from').datetimepicker('maxDate', e.date);
+            });
+        });
+    </script>
 {% endblock %}
-
-
 
 {% block tabcontent %}
 
     {% if orders or form.is_bound %}
-        <div class="card card-body bg-light">
-            <h2>{% trans "Filter" %}</h2>
+       <div class="shop-cart-table">
+            <h4 class="title-1 title-border text-uppercase mb-30">Filter </h4>
             <form method="get">
                 {% include "oscar/partials/form_fields.html" with form=form style='horizontal' %}
                 <div class="form-group row">
-                    <div class="offset-sm-4 col-sm-8">
-                        <button type="submit" class="btn btn-primary" data-loading-text="{% trans 'Filtering...' %}">{% trans 'Filter results' %}</button>
-                        <a href="{% url 'customer:order-list' %}" class="btn btn-secondary">{% trans 'Reset' %}</a>
+                   <div class="offset-sm-4 col-sm-8">
+                    <div class="d-flex justify-content-start">
+                        <button type="submit" data-text="Filter results" class="button-one submit-button mt-15" data-loading-text="{% trans 'Filtering...' %}">{% trans 'Filter results' %}</button>
+                        <a href="{% url 'customer:order-list' %}" style="background: #6c757d; margin-left: 2%" data-text="Reset" class="button-one submit-button mt-15 ml-3">{% trans 'Reset' %}</a>
                     </div>
                 </div>
+                </div>
             </form>
-        </div>
+
     {% endif %}
 
     {% if orders %}
-        <h2>{{ form.description }}</h2>
+        <h4 class="title-1 title-border text-uppercase mb-30">All Orders</h4>
+    <div class="table-responsive">
+        <p class="text-end">
+         {% trans "Showing" %}
+            {{ page_obj.start_index }}-{{ page_obj.end_index }}
+            {% trans "of" %}
+            {{ paginator.count }}
+            {% trans "Results" %}
+        </p>
         <table class="table table-striped table-bordered">
             <tr>
                 <th>{% trans "Order number" %}</th>
@@ -44,13 +102,14 @@
             </tr>
             {% for order in orders %}
                 <tr>
-                    <td><a href="{% url 'customer:order' order_number=order.number %}">{{ order.number }}</a></td>
+                    <td><a style="color: #c0a16b;" href="{% url 'customer:order' order_number=order.number %}">{{ order.number }}</a></td>
                     <td>{{ order.num_items }}</td>
                     <td>{{ order.total_incl_tax|currency:order.currency }}</td>
                     <td>{{ order.date_placed }}</td>
                 </tr>
             {% endfor %}
         </table>
+    </div>
         {% include "oscar/partials/pagination.html" %}
     {% else %}
         {% if form.is_bound %}
@@ -59,5 +118,17 @@
             <p>{% trans "You haven't placed any orders." %}</p>
         {% endif %}
     {% endif %}
-
+    </div>
+<style>
+.alert {
+    top:1px;
+    display:inherit;
+}
+.input-group-text {
+    margin-left:10%;
+    width:100%;
+    height: 70%;
+    border-radius: 0;
+}
+</style>
 {% endblock tabcontent %}

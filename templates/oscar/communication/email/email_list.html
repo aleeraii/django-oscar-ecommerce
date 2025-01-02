@@ -2,27 +2,36 @@
 {% load i18n %}
 
 {% block tabcontent %}
-    {% if emails %}
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>{% trans 'Subject' %}</th>
-                    <th>{% trans 'Date sent' %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for email in emails %}
+{% if emails %}
+    <div class="shop-cart-table">
+         <p class="text-end">
+         {% trans "Showing" %}
+            {{ page_obj.start_index }}-{{ page_obj.end_index }}
+            {% trans "of" %}
+            {{ paginator.count }}
+            {% trans "Results" %}
+        </p>
+            <table class="table table-striped table-bordered">
+                <thead>
                     <tr>
-                        <td>
-                            <a href="{% url 'customer:email-detail' email_id=email.id %}">{{ email.subject }}</a>
-                        </td>
-                        <td>{{ email.date_sent }}</td>
+                        <th>{% trans 'Subject' %}</th>
+                        <th>{% trans 'Date sent' %}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% include "oscar/partials/pagination.html" %}
-    {% else %}
-        <p>{% trans 'No emails found' %}</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for email in emails %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'customer:email-detail' email_id=email.id %}" style="color: #c0a16b">{{ email.subject }}</a>
+                            </td>
+                            <td>{{ email.date_sent }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% include "oscar/partials/pagination.html" %}
+        {% else %}
+            <p>{% trans 'No emails found' %}</p>
+    </div>
+{% endif %}
 {% endblock tabcontent %}
