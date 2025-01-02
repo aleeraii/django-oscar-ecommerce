@@ -5,6 +5,7 @@ django-extra-views==0.14.0
 django-haystack==3.3.0
 django-oscar==3.2.4
 django-phonenumber-field==6.4.0
+django-sendgrid-v5==1.2.4
 django-tables2==2.3.4
 django-treebeard==4.7.1
 django-widget-tweaks==1.5.0
@@ -13,9 +14,14 @@ Faker==33.0.0
 packaging==24.2
 phonenumbers==8.13.50
 pillow==11.0.0
+psycopg2-binary==2.9.10
 purl==1.6
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
+python-http-client==3.3.7
+sendgrid==6.11.0
 six==1.16.0
 sorl-thumbnail==12.11.0
 sqlparse==0.5.2
+starkbank-ecdsa==2.2.0
 typing_extensions==4.12.2
