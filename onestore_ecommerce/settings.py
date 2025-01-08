@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(h@!^^v1j7^6#6%s4(oqg_x*gtl!cje82%ng=3@(a!s#762&cd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -211,5 +211,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 OSCAR_PRODUCTS_PER_PAGE = 9
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://3117-182-187-142-251.ngrok-free.app',
+    'https://ecommerce.codefulcrum.com'
 ]
